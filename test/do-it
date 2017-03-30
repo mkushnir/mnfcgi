@@ -1,0 +1,5 @@
+#!/bin/sh
+
+curl -v 'http://alice:234567@localhost:8000/login?cl=qweqwe&response_type=code&client_id=asd&redirect_uri=http://qwe%20/&state=asd'
+curl -v 'http://alice:234567@localhost:8000/login?cl=qweqwe&response_type=code&client_id=cid:1234567&redirect_uri=http://localhost:1234/myadmin'
+curl -v 'http://alice1:1234567@localhost:8000/login?cl=qweqwe&response_type=code&client_id=asd&redirect_uri=http://qwe%20/&state=asd'

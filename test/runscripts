@@ -1,0 +1,27 @@
+#!/bin/sh
+
+align() {
+    python -c "import time; ts=time.time();tts=$1-(ts%$1);print 'Sleeping for %s seconds...'%tts;time.sleep(tts);print time.time()"
+}
+
+out() {
+    echo `date -u` $*
+}
+
+align 2
+
+#curl --data-binary '{"This is the test"}' -H 'x-marek: qwe'  localhost:8000/ localhost:8000/ localhost:8000
+
+curl --keepalive-time 60 --data-binary '{"This is the test"}' -H 'x-marek: qwe'  http://localhost:8000/ http://localhost:8000/ http://localhost:8000/ http://localhost:8000/ http://localhost:8000/ http://localhost:8000/ &
+curl --keepalive-time 60 --data-binary '{"This is the test"}' -H 'x-marek: qwe'  http://localhost:8000/ http://localhost:8000/ http://localhost:8000/ http://localhost:8000/ http://localhost:8000/ http://localhost:8000/ &
+curl --keepalive-time 60 --data-binary '{"This is the test"}' -H 'x-marek: qwe'  http://localhost:8000/ http://localhost:8000/ http://localhost:8000/ http://localhost:8000/ http://localhost:8000/ http://localhost:8000/ &
+curl --keepalive-time 60 --data-binary '{"This is the test"}' -H 'x-marek: qwe'  http://localhost:8000/ http://localhost:8000/ http://localhost:8000/ http://localhost:8000/ http://localhost:8000/ http://localhost:8000/ &
+curl --keepalive-time 60 --data-binary '{"This is the test"}' -H 'x-marek: qwe'  http://localhost:8000/ http://localhost:8000/ http://localhost:8000/ http://localhost:8000/ http://localhost:8000/ http://localhost:8000/ &
+curl --keepalive-time 60 --data-binary '{"This is the test"}' -H 'x-marek: qwe'  http://localhost:8000/ http://localhost:8000/ http://localhost:8000/ http://localhost:8000/ http://localhost:8000/ http://localhost:8000/ &
+curl --keepalive-time 60 --data-binary '{"This is the test"}' -H 'x-marek: qwe'  http://localhost:8000/ http://localhost:8000/ http://localhost:8000/ http://localhost:8000/ http://localhost:8000/ http://localhost:8000/ &
+
+out one
+sleep 3
+out two
+sleep 1
+out Exiting ...
