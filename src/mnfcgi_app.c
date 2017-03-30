@@ -114,11 +114,11 @@ end:
 err:
     if (res == MNFCGI_REQUEST_STATE) {
         CTRACE("MNFCGI_REQUEST_STATE violation");
-        goto end;
 
     } else {
-        FAIL("mnfcgi_app_error");
+        CTRACE("res=%s", MNFCHI_ESTR(res));
     }
+    goto end;
 }
 
 
@@ -168,8 +168,8 @@ err:
 
 
 int
-mnfcgi_app_params_complete(mnfcgi_request_t *req,
-                           UNUSED void *udata)
+mnfcgi_app_params_complete_select_exact(mnfcgi_request_t *req,
+                                        UNUSED void *udata)
 {
 
 

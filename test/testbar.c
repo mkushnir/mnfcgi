@@ -184,7 +184,7 @@ run1(UNUSED int argc, UNUSED void **argv)
         mnfcgi_app_callback_table_t t = {
             .init_app = testoauth_app_init,
             .begin_request = testoauth_begin_request, /* NULL? */
-            .params_complete = mnfcgi_app_params_complete,
+            .params_complete = mnfcgi_app_params_complete_select_exact,
             ._stdin = testoauth_stdin, /* NULL? */
             .data = testoauth_data, /* NULL? */
             .stdin_end = testoauth_stdin_end,

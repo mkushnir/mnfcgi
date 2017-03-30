@@ -293,7 +293,7 @@ typedef struct _mnfcgi_ctx {
  */
 typedef struct _mnfcgi_request {
     /*
-     * public interface
+     * public
      */
     /*
      * app specific data, for example method selector in an API application.
@@ -321,7 +321,9 @@ typedef struct _mnfcgi_request {
         size_t content_length;
     } info;
 
-    /* private*/
+    /*
+     * private
+     */
     mnfcgi_ctx_t *ctx;
     /* strong mnbytes_t *, mnbytes_t* */
     mnhash_t headers;

@@ -37,7 +37,7 @@ typedef struct _mnfcgi_config mnfcgi_config_t;
 #ifndef MNFCGI_REQUEST_T_DEFINED
 struct _mnfcgi_request {
     /*
-     * public interface
+     * public
      */
     /*
      * app specific data, for example method selector in an API application.
@@ -164,10 +164,10 @@ ssize_t mnfcgi_cat(mnbytestream_t *, size_t, const char *);
  */
 void mnfcgi_ctx_send_interrupt(mnfcgi_request_t *);
 
+
 /*
  * util
  */
-
 int mnfcgi_parse_qterms(mnbytes_t *, char, char, mnhash_t *);
 
 #ifdef __cplusplus

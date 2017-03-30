@@ -18,6 +18,9 @@ typedef int (*mnfcgi_app_finalizer_t)(struct _mnfcgi_app *);
 #define MNFCGI_APP_FINALIZER_T_DEFINED
 
 typedef struct _mnfcgi_app_callback_table {
+    /*
+     * public
+     */
     mnfcgi_app_initializer_t init_app;
     mnfcgi_app_callback_t begin_request;
     mnfcgi_app_callback_t params_complete;
@@ -26,11 +29,17 @@ typedef struct _mnfcgi_app_callback_table {
     mnfcgi_app_callback_t stdin_end;
     mnfcgi_app_callback_t end_request;
     mnfcgi_app_finalizer_t fini_app;
+    /*
+     * private
+     */
 } mnfcgi_app_callback_table_t;
 #define MNFCGI_APP_CALLBACK_TABLE_T_DEFINED
 
 
 typedef struct _mnfcgi_app {
+    /*
+     * private
+     */
     mnfcgi_config_t config;
     mnfcgi_app_callback_table_t callback_table;
     mnhash_t endpoint_tables;
