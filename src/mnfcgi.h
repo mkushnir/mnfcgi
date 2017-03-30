@@ -67,18 +67,6 @@ struct _mnfcgi_request {
 };
 typedef struct _mnfcgi_request mnfcgi_request_t;
 
-#define MNFCGI_REQUEST_SCHEME_HTTP      0
-#define MNFCGI_REQUEST_SCHEME_HTTPS     1
-
-#define MNFCGI_REQUEST_METHOD_GET       0
-#define MNFCGI_REQUEST_METHOD_HEAD      1
-#define MNFCGI_REQUEST_METHOD_POST      2
-#define MNFCGI_REQUEST_METHOD_PUT       3
-#define MNFCGI_REQUEST_METHOD_DELETE    4
-#define MNFCGI_REQUEST_METHOD_OPTIONS   5
-#define MNFCGI_REQUEST_METHOD_UNKNOWN   6
-#define MNFCGI_REQUEST_METHOD_COUNT     7
-
 #define MNFCGI_REQUEST_T_DEFINED
 #endif
 
