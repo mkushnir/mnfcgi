@@ -439,7 +439,7 @@ mnfcgi_parse(mnbytestream_t *bs, int fd)
         CTRACE("Unknown type %d version %d", type, version);
         goto err;
     }
-    if (version != 1) {
+    if (version != MNFCGI_VERSION) {
         CTRACE("Unknown version %d", version);
         goto err;
     }
