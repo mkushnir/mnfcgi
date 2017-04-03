@@ -17,6 +17,7 @@ mnfcgi_parse_qterms(mnbytes_t *s,
     char *ss = (char *)BDATA(s);
     size_t i0, i1, j;
 
+
 #define MNFCGI_PARSE_QTERMS_FIND_PAIR()                                \
     for (j = i0; j < i1; ++j) {                                        \
         char cc;                                                       \
@@ -36,14 +37,20 @@ mnfcgi_parse_qterms(mnbytes_t *s,
  */                                                                    \
     if (j > i0) {                                                      \
         mnbytes_t *key, *value;                                        \
+        key = bytes_new_from_str_len(ss + i0, j - i0);                 \
+/*                                                                     \
         key = bytes_new(j - i0 + 1);                                   \
         memcpy((char *)BDATA(key), ss + i0, j - i0);                   \
         BDATA(key)[j - i0] = '\0';                                     \
+ */                                                                    \
         ++j;                                                           \
         if (i1 >= j) {                                                 \
+            value = bytes_new_from_str_len(ss + j, i1 - j);            \
+/*                                                                     \
             value = bytes_new(i1 - j + 1);                             \
             memcpy((char *)BDATA(value), ss + j, i1 - j);              \
             BDATA(value)[i1 - j] = '\0';                               \
+ */                                                                    \
         } else {                                                       \
             value = bytes_new(1);                                      \
             BDATA(value)[0] = '\0';                                    \

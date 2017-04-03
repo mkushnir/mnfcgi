@@ -222,9 +222,7 @@ mnfcgi_parse_kvp(UNUSED mnfcgi_record_t *rec,
     }
 
     if (ksz > 0) {
-        *key = bytes_new(ksz + 1);
-        memcpy(BDATA(*key), SDATA(bs, SPOS(bs) + idx), ksz);
-        BDATA(*key)[ksz] = '\0';
+        *key = bytes_new_from_str_len(SDATA(bs, SPOS(bs) + idx), ksz);
 
     } else {
         if (flags & MNFCGI_PARSE_KVP_FNONULL) {
@@ -236,9 +234,7 @@ mnfcgi_parse_kvp(UNUSED mnfcgi_record_t *rec,
     }
 
     if (vsz > 0) {
-        *value = bytes_new(vsz + 1);
-        memcpy(BDATA(*value), SDATA(bs, SPOS(bs) + idx + ksz), vsz);
-        BDATA(*value)[vsz] = '\0';
+        *value = bytes_new_from_str_len(SDATA(bs, SPOS(bs) + idx + ksz), vsz);
 
     } else {
         if (flags & MNFCGI_PARSE_KVP_FNONULL) {

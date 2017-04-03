@@ -424,9 +424,7 @@ mnfcgi_request_field_addt(mnfcgi_request_t *req,
     tv = gmtime(&t);
     n = strftime(buf, sizeof(buf), "%a, %d %b %Y %H:%M:%S GMT",
                  tv);
-    value = bytes_new(n + 1);
-    memcpy(BDATA(value), buf, n);
-    BDATA(value)[n] = '\0';
+    value = bytes_new_from_str_len(buf, n);
 
     if (hit != NULL) {
         if (flags & MNFCGI_FADD_OVERRIDE) {

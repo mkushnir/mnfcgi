@@ -66,7 +66,6 @@ struct _mnfcgi_request {
     } info;
 };
 typedef struct _mnfcgi_request mnfcgi_request_t;
-
 #define MNFCGI_REQUEST_T_DEFINED
 #endif
 
