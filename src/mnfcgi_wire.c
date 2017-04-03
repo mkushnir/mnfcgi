@@ -406,7 +406,7 @@ mnfcgi_parse_padding(mnbytestream_t *bs, mnfcgi_record_t *rec)
 
 
 mnfcgi_record_t *
-mnfcgi_parse(mnbytestream_t *bs, int fd)
+mnfcgi_parse(mnbytestream_t *bs, void *fd)
 {
     int rv;
     mnfcgi_record_t *res;

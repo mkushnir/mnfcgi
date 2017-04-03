@@ -630,6 +630,7 @@ mnfcgi_ctx_init(mnfcgi_ctx_t *ctx,
     ctx->config = config;
     ctx->thread = NULL;
     ctx->fd = fd;
+    ctx->fp = (void *)(intptr_t)fd;
 
     bytestream_init(&ctx->in,
                     MNFCGI_DEFAULT_BYTESTREAM_BUFSZ);
@@ -653,6 +654,7 @@ mnfcgi_ctx_fini(mnfcgi_ctx_t *ctx)
         close(ctx->fd);
         ctx->fd = -1;
     }
+    ctx->fp = (void *)-1;
     hash_fini(&ctx->requests);
     bytestream_fini(&ctx->in);
     bytestream_fini(&ctx->out);
@@ -763,7 +765,7 @@ mnfcgi_abort_request(mnfcgi_request_t *req, int app_status)
         if (MRKUNLIKELY(
                 (res = bytestream_produce_data(
                     &req->ctx->out,
-                    req->ctx->fd)) != 0)) {
+                    req->ctx->fp)) != 0)) {
             res = MNFCGI_IO_ERROR;
         }
     } else {
@@ -827,7 +829,7 @@ _mnfcgi_handle_socket(mnfcgi_ctx_t *ctx)
         mnhash_iter_t it;
         mnfcgi_request_t *req;
 
-        if (MRKUNLIKELY((rec = mnfcgi_parse(&ctx->in, ctx->fd)) == NULL)) {
+        if (MRKUNLIKELY((rec = mnfcgi_parse(&ctx->in, ctx->fp)) == NULL)) {
             goto err;
         }
 
@@ -849,7 +851,7 @@ _mnfcgi_handle_socket(mnfcgi_ctx_t *ctx)
                         goto err;
                     }
                     if (MRKUNLIKELY(
-                        bytestream_produce_data(&ctx->out, ctx->fd) != 0)) {
+                        bytestream_produce_data(&ctx->out, ctx->fp) != 0)) {
                         goto err;
                     }
                     mnfcgi_record_destroy(&rec);
@@ -877,7 +879,7 @@ _mnfcgi_handle_socket(mnfcgi_ctx_t *ctx)
 
                                 if (MRKUNLIKELY(
                                     bytestream_produce_data(&ctx->out,
-                                                            ctx->fd) != 0)) {
+                                                            ctx->fp) != 0)) {
                                     goto err;
                                 }
                                 /* cannot pass down, request is destroyed */
@@ -905,7 +907,7 @@ _mnfcgi_handle_socket(mnfcgi_ctx_t *ctx)
                             goto err;
                         }
                         if (MRKUNLIKELY(
-                            bytestream_produce_data(&ctx->out, ctx->fd) != 0)) {
+                            bytestream_produce_data(&ctx->out, ctx->fp) != 0)) {
                             goto err;
                         }
                         mnfcgi_record_destroy(&rec);
@@ -935,7 +937,7 @@ _mnfcgi_handle_socket(mnfcgi_ctx_t *ctx)
 
                 if (MRKUNLIKELY(
                     bytestream_produce_data(&ctx->out,
-                                            ctx->fd) != 0)) {
+                                            ctx->fp) != 0)) {
                     goto err;
                 }
                 mnfcgi_record_destroy(&rec);
@@ -956,7 +958,7 @@ _mnfcgi_handle_socket(mnfcgi_ctx_t *ctx)
                     }
                     if (MRKUNLIKELY(
                         bytestream_produce_data(&ctx->out,
-                                                ctx->fd) != 0)) {
+                                                ctx->fp) != 0)) {
                         goto err;
                     }
                     mnfcgi_record_destroy(&rec);
@@ -982,7 +984,7 @@ _mnfcgi_handle_socket(mnfcgi_ctx_t *ctx)
 
                             if (MRKUNLIKELY(
                                 bytestream_produce_data(&ctx->out,
-                                                        ctx->fd) != 0)) {
+                                                        ctx->fp) != 0)) {
                                 goto err;
                             }
                             /*
@@ -1017,7 +1019,7 @@ _mnfcgi_handle_socket(mnfcgi_ctx_t *ctx)
                     }
                     if (MRKUNLIKELY(
                         bytestream_produce_data(&ctx->out,
-                                                ctx->fd) != 0)) {
+                                                ctx->fp) != 0)) {
                         goto err;
                     }
                     mnfcgi_record_destroy(&rec);
@@ -1069,7 +1071,7 @@ _mnfcgi_handle_socket(mnfcgi_ctx_t *ctx)
                     }
                     if (MRKUNLIKELY(
                         bytestream_produce_data(&ctx->out,
-                                                ctx->fd) != 0)) {
+                                                ctx->fp) != 0)) {
                         goto err;
                     }
                     mnfcgi_record_destroy(&rec);
@@ -1161,7 +1163,7 @@ _mnfcgi_handle_socket(mnfcgi_ctx_t *ctx)
 
                 mnfcgi_record_destroy(&response);
                 if (MRKUNLIKELY(
-                        bytestream_produce_data(&ctx->out, ctx->fd) != 0)) {
+                        bytestream_produce_data(&ctx->out, ctx->fp) != 0)) {
                     goto err;
                 }
                 mnfcgi_record_destroy(&rec);
@@ -1201,7 +1203,7 @@ mnfcgi_flush_out(mnfcgi_request_t *req)
         if (MRKUNLIKELY(
                 (res = bytestream_produce_data(
                     &req->ctx->out,
-                    req->ctx->fd)) != 0)) {
+                    req->ctx->fp)) != 0)) {
             res = MNFCGI_IO_ERROR;
         }
         bytestream_rewind(&req->ctx->out);
@@ -1241,7 +1243,7 @@ mnfcgi_finalize_request(mnfcgi_request_t *req)
         if (MRKUNLIKELY(
                 (res = bytestream_produce_data(
                     &req->ctx->out,
-                    req->ctx->fd)) != 0)) {
+                    req->ctx->fp)) != 0)) {
             res = MNFCGI_IO_ERROR;
         }
         req->flags.complete = 1;

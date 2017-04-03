@@ -280,6 +280,7 @@ typedef struct _mnfcgi_ctx {
     mnfcgi_config_t *config;
     mrkthr_ctx_t *thread;
     int fd;
+    void *fp;
     mnbytestream_t in;
     mnbytestream_t out;
     /* strong uint16_t, mnfcgi_request_t */
@@ -354,7 +355,7 @@ mnfcgi_record_t *mnfcgi_record_new(uint8_t);
 
 void mnfcgi_record_destroy(mnfcgi_record_t **);
 
-mnfcgi_record_t *mnfcgi_parse(mnbytestream_t *, int);
+mnfcgi_record_t *mnfcgi_parse(mnbytestream_t *, void *);
 
 #define MNFCGI_RENDER_ERROR (-1)
 int mnfcgi_render(mnbytestream_t *, mnfcgi_record_t *, void *);
