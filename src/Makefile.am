@@ -30,7 +30,7 @@ endif
 libmnfcgi_la_CFLAGS = $(DEBUG_FLAGS) -Wall -Wextra -Werror -std=c99 @_GNU_SOURCE_MACRO@ -I$(top_srcdir)/src -I$(top_srcdir) -I$(includedir)
 
 #libmnfcgi_la_LDFLAGS = -version-info 0:0:0
-libmnfcgi_la_LDFLAGS = -version-info 0:0:0 -L$(libdir) -lmrkthr -lmrkcommon
+libmnfcgi_la_LDFLAGS = -version-info 0:0:0 -L$(libdir) -lmrkapp -lmrkthr -lmrkcommon
 #libmnfcgi_la_LDFLAGS = -all-static
 #libmnfcgi_la_LDFLAGS = -all-static -Wl,-Bdynamic,-L$(libdir),-lfoo -lqwe,-Bstatic
 

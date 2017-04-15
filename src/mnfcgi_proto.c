@@ -27,17 +27,39 @@ static mnbytes_t _param_request_scheme = BYTES_INITIALIZER("REQUEST_SCHEME");
 static mnbytes_t _http = BYTES_INITIALIZER("http");
 static mnbytes_t _https = BYTES_INITIALIZER("https");
 static mnbytes_t _param_request_method = BYTES_INITIALIZER("REQUEST_METHOD");
-static mnbytes_t _get = BYTES_INITIALIZER("GET");
-static mnbytes_t _post = BYTES_INITIALIZER("POST");
-static mnbytes_t _head = BYTES_INITIALIZER("HEAD");
-static mnbytes_t _put = BYTES_INITIALIZER("PUT");
-static mnbytes_t _delete = BYTES_INITIALIZER("DELETE");
-static mnbytes_t _options = BYTES_INITIALIZER("OPTIONS");
 static mnbytes_t _param_script_name = BYTES_INITIALIZER("SCRIPT_NAME");
 static mnbytes_t _param_query_string = BYTES_INITIALIZER("QUERY_STRING");
 static mnbytes_t _param_content_length = BYTES_INITIALIZER("CONTENT_LENGTH");
 static mnbytes_t _param_content_type = BYTES_INITIALIZER("CONTENT_TYPE");
 
+/*
+ * MNFCGI_REQUEST_METHOD_*
+ */
+static mnbytes_t _get = BYTES_INITIALIZER("GET");
+static mnbytes_t _head = BYTES_INITIALIZER("HEAD");
+static mnbytes_t _post = BYTES_INITIALIZER("POST");
+static mnbytes_t _put = BYTES_INITIALIZER("PUT");
+static mnbytes_t _delete = BYTES_INITIALIZER("DELETE");
+static mnbytes_t _options = BYTES_INITIALIZER("OPTIONS");
+static mnbytes_t __unknown_ = BYTES_INITIALIZER("<unknown>");
+static mnbytes_t *mnfcgi_request_methods[] = {
+    &_get,
+    &_head,
+    &_post,
+    &_put,
+    &_delete,
+    &_options,
+    &__unknown_,
+    NULL,
+};
+
+
+mnbytes_t *
+mnfcgi_request_method_str(unsigned m)
+{
+    assert(m < countof(mnfcgi_request_methods));
+    return mnfcgi_request_methods[m];
+}
 /*
  * mnfcgi_request_t
  */
@@ -223,6 +245,21 @@ mnfcgi_request_get_param(mnfcgi_request_t *req,
 }
 
 
+mnbytes_t *
+mnfcgi_request_get_query_term(mnfcgi_request_t *req,
+                              mnbytes_t *name)
+{
+    mnbytes_t *res;
+    mnhash_item_t *hit;
+
+    res = NULL;
+    if ((hit = hash_get_item(&req->info.query_terms, name)) != NULL) {
+        res = hit->value;
+    }
+
+    return res;
+}
+
 void
 mnfcgi_request_fill_info(mnfcgi_request_t *req)
 {
@@ -268,7 +305,7 @@ mnfcgi_request_fill_info(mnfcgi_request_t *req)
     if (MRKLIKELY(
         (value = mnfcgi_request_get_param(req,
                                           &_param_query_string)) != NULL)) {
-        (void)mnfcgi_parse_qterms(value, '=', '&', &req->info.query_terms);
+        (void)mrkhttp_parse_qterms(value, '=', '&', &req->info.query_terms);
     }
 
     if (MRKLIKELY(

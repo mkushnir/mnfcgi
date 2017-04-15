@@ -14,6 +14,8 @@
 #include <mrkcommon/hash.h>
 #include <mrkcommon/bytestream.h>
 
+#include <mrkhttp.h>
+
 #ifdef __cplusplus
 extern "C" {
 #endif
@@ -115,6 +117,8 @@ int mnfcgi_flush_out(mnfcgi_request_t *);
 int mnfcgi_finalize_request(mnfcgi_request_t *);
 mnbytes_t *mnfcgi_request_get_param(mnfcgi_request_t *,
                                     mnbytes_t *);
+mnbytes_t *mnfcgi_request_get_query_term(mnfcgi_request_t *,
+                                         mnbytes_t *);
 void mnfcgi_request_fill_info(mnfcgi_request_t *);
 
 #define MNFCGI_FADD_IFNOEXISTS  (0x01)
@@ -155,7 +159,7 @@ void mnfcgi_ctx_send_interrupt(mnfcgi_request_t *);
 /*
  * util
  */
-int mnfcgi_parse_qterms(mnbytes_t *, char, char, mnhash_t *);
+mnbytes_t *mnfcgi_request_method_str(unsigned);
 
 #ifdef __cplusplus
 }

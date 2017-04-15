@@ -171,8 +171,6 @@ int
 mnfcgi_app_params_complete_select_exact(mnfcgi_request_t *req,
                                         UNUSED void *udata)
 {
-
-
     mnhash_item_t *hit;
     UNUSED mnhash_iter_t it;
     mnfcgi_app_t *app;
@@ -198,6 +196,70 @@ mnfcgi_app_params_complete_select_exact(mnfcgi_request_t *req,
 
     //CTRACE("params ...");
     return 0;
+}
+
+
+/*
+ * return either NULL, or an (mnbytes_t *) instance with nref = 0;
+ */
+
+#ifndef UNITTEST
+static
+#endif
+mnbytes_t *
+_mnfcgi_app_get_allowed_methods(mnfcgi_app_t *app, mnbytes_t *script_name)
+{
+    mnbytes_t *res;
+    mnhash_item_t *hit;
+    res = NULL;
+    if ((hit = hash_get_item(&app->endpoint_tables, script_name)) != NULL) {
+        mnfcgi_app_endpoint_table_t *t;
+        unsigned i;
+        size_t sz;
+        BYTES_ALLOCA(comma, ",");
+
+        t = hit->value;
+        assert(t != NULL);
+
+        /*
+         * XXX we rely on the fact that none of mnfcgi_request_methods[]
+         * XXX items is longer than 16 chars.
+         */
+        res = bytes_new(countof(t->method_callback) * 16);
+        memset(BDATA(res), '\0', countof(t->method_callback) * 16);
+        sz = 0;
+        for (i = 0; i < countof(t->method_callback); ++i) {
+            if (t->method_callback[i] != NULL) {
+                mnbytes_t *m;
+
+                m = mnfcgi_request_method_str(i);
+                bytes_copy(res, m, sz);
+                sz += BSZ(m) - 1;
+                bytes_copy(res, comma, sz);
+                sz += BSZ(comma) - 1;
+            }
+        }
+        if (sz > 0) {
+            sz -= BSZ(comma) - 1;
+        }
+        BDATA(res)[sz] = '\0';
+        ++sz;
+        BSZ(res) = sz;
+    }
+
+    return res;
+}
+
+
+mnbytes_t *
+mnfcgi_app_get_allowed_methods(mnfcgi_request_t *req)
+{
+    mnfcgi_app_t *app;
+
+    app = (mnfcgi_app_t *)req->ctx->config;
+    assert(app != NULL);
+    assert(req->info.script_name != NULL);
+    return _mnfcgi_app_get_allowed_methods(app, req->info.script_name);
 }
 
 

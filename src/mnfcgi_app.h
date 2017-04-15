@@ -76,6 +76,7 @@ void mnfcgi_app_destroy(mnfcgi_app_t **);
 
 
 int mnfcgi_app_params_complete_select_exact(mnfcgi_request_t *, void *);
+mnbytes_t *mnfcgi_app_get_allowed_methods(mnfcgi_request_t *);
 
 void mnfcgi_app_error(mnfcgi_request_t *, int, mnbytes_t *);
 void mnfcgi_app_redir(mnfcgi_request_t *, int, mnbytes_t *, mnbytes_t *);

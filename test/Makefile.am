@@ -33,8 +33,8 @@ gendata_LDFLAGS = -L$(libdir) -lmrkcommon
 #gendata_LDFLAGS = 
 
 nodist_testfoo_SOURCES = diag.c
-testfoo_SOURCES = testfoo.c
-testfoo_CFLAGS = $(DEBUG_FLAGS) -Wall -Wextra -Werror -std=c99 @_GNU_SOURCE_MACRO@ -I$(top_srcdir)/test -I$(top_srcdir)/src -I$(top_srcdir) -I$(includedir)
+testfoo_SOURCES = ../src/mnfcgi_app.c testfoo.c
+testfoo_CFLAGS = $(DEBUG_FLAGS) -DUNITTEST -Wall -Wextra -Werror -std=c99 @_GNU_SOURCE_MACRO@ -I$(top_srcdir)/test -I$(top_srcdir)/src -I$(top_srcdir) -I$(includedir)
 testfoo_LDFLAGS = -L$(top_srcdir)/src/.libs -lmnfcgi -L$(libdir) -lmrkthr -lmrkcommon
 #testfoo_LDFLAGS = -L$(top_srcdir)/src/.libs -lmnfcgi
 
