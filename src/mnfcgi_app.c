@@ -199,6 +199,41 @@ mnfcgi_app_params_complete_select_exact(mnfcgi_request_t *req,
 }
 
 
+#if 0
+int
+myoauth_app_params_odata(mnfcgi_request_t *req, UNUSED void *udata)
+{
+    mnfcgi_app_t *app;
+
+    mnfcgi_request_fill_info(req);
+    app = (mnfcgi_app_t *)req->ctx->config;
+    assert(app != NULL);
+
+    if (req->info.script_name == NULL) {
+        /* 404 */
+        mnfcgi_app_error(req, 404, &_not_found);
+
+    } else {
+        mnbytes_t *script_base;
+        mnhash_item_t *hit;
+        mnfcgi_app_endpoint_table_t *t;
+
+
+        script_base = NULL;
+        if ((hit = hash_get_item(&app->endpoint_tables, script_base)) == NULL) {
+            /* 404 */
+            mnfcgi_app_error(req, 404, &_not_found);
+        } else {
+            t = hit->value;
+            assert(t != NULL);
+            req->udata = t->method_callback[req->info.method];
+        }
+    }
+    return 0;
+}
+#endif
+
+
 /*
  * return either NULL, or an (mnbytes_t *) instance with nref = 0;
  */

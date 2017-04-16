@@ -40,6 +40,7 @@ static mnbytes_t _head = BYTES_INITIALIZER("HEAD");
 static mnbytes_t _post = BYTES_INITIALIZER("POST");
 static mnbytes_t _put = BYTES_INITIALIZER("PUT");
 static mnbytes_t _delete = BYTES_INITIALIZER("DELETE");
+static mnbytes_t _patch = BYTES_INITIALIZER("PATCH");
 static mnbytes_t _options = BYTES_INITIALIZER("OPTIONS");
 static mnbytes_t __unknown_ = BYTES_INITIALIZER("<unknown>");
 static mnbytes_t *mnfcgi_request_methods[] = {
@@ -48,6 +49,7 @@ static mnbytes_t *mnfcgi_request_methods[] = {
     &_post,
     &_put,
     &_delete,
+    &_patch,
     &_options,
     &__unknown_,
     NULL,
@@ -281,17 +283,19 @@ mnfcgi_request_fill_info(mnfcgi_request_t *req)
         if (bytes_cmp(value, &_get) == 0) {
             req->info.method = MNFCGI_REQUEST_METHOD_GET;
         } else if (bytes_cmp(value, &_post) == 0) {
-            req->info.scheme = MNFCGI_REQUEST_METHOD_POST;
+            req->info.method = MNFCGI_REQUEST_METHOD_POST;
         } else if (bytes_cmp(value, &_head) == 0) {
-            req->info.scheme = MNFCGI_REQUEST_METHOD_HEAD;
+            req->info.method = MNFCGI_REQUEST_METHOD_HEAD;
         } else if (bytes_cmp(value, &_put) == 0) {
-            req->info.scheme = MNFCGI_REQUEST_METHOD_PUT;
+            req->info.method = MNFCGI_REQUEST_METHOD_PUT;
         } else if (bytes_cmp(value, &_delete) == 0) {
-            req->info.scheme = MNFCGI_REQUEST_METHOD_DELETE;
+            req->info.method = MNFCGI_REQUEST_METHOD_DELETE;
+        } else if (bytes_cmp(value, &_patch) == 0) {
+            req->info.method = MNFCGI_REQUEST_METHOD_PATCH;
         } else if (bytes_cmp(value, &_options) == 0) {
-            req->info.scheme = MNFCGI_REQUEST_METHOD_OPTIONS;
+            req->info.method = MNFCGI_REQUEST_METHOD_OPTIONS;
         } else {
-            req->info.scheme = MNFCGI_REQUEST_METHOD_UNKNOWN;
+            req->info.method = MNFCGI_REQUEST_METHOD_UNKNOWN;
         }
     }
 

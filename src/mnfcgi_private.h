@@ -288,6 +288,26 @@ typedef struct _mnfcgi_ctx {
 } mnfcgi_ctx_t;
 
 
+typedef enum _mnfcgi_request_scheme {
+    MNFCGI_REQUEST_SCHEME_HTTP =    0,
+    MNFCGI_REQUEST_SCHEME_HTTPS =   1,
+} mnfcgi_request_scheme_t;
+#define MNFCGI_REQUEST_SCHEME_T_DEFINED
+
+
+typedef enum _mnfcgi_request_method {
+    MNFCGI_REQUEST_METHOD_GET =     0,
+    MNFCGI_REQUEST_METHOD_HEAD =    1,
+    MNFCGI_REQUEST_METHOD_POST =    2,
+    MNFCGI_REQUEST_METHOD_PUT =     3,
+    MNFCGI_REQUEST_METHOD_DELETE =  4,
+    MNFCGI_REQUEST_METHOD_PATCH =   5,
+    MNFCGI_REQUEST_METHOD_OPTIONS = 6,
+    MNFCGI_REQUEST_METHOD_UNKNOWN = 7,
+    MNFCGI_REQUEST_METHOD_COUNT =   8,
+} mnfcgi_request_method_t;
+#define MNFCGI_REQUEST_METHOD_T_DEFINED
+
 /*
  * lifetime limited to the execution scope of
  * all mnfcgi_config_t.xxx_(parse|render)
@@ -302,20 +322,8 @@ typedef struct _mnfcgi_request {
     void *udata;
 
     struct {
-#define MNFCGI_REQUEST_SCHEME_HTTP      0
-#define MNFCGI_REQUEST_SCHEME_HTTPS     1
-        int scheme;
-
-#define MNFCGI_REQUEST_METHOD_GET       0
-#define MNFCGI_REQUEST_METHOD_HEAD      1
-#define MNFCGI_REQUEST_METHOD_POST      2
-#define MNFCGI_REQUEST_METHOD_PUT       3
-#define MNFCGI_REQUEST_METHOD_DELETE    4
-#define MNFCGI_REQUEST_METHOD_OPTIONS   5
-#define MNFCGI_REQUEST_METHOD_UNKNOWN   6
-#define MNFCGI_REQUEST_METHOD_COUNT     7
-        int method;
-
+        mnfcgi_request_scheme_t scheme;
+        mnfcgi_request_method_t method;
         mnbytes_t *script_name;
         mnhash_t query_terms;
         mnbytes_t *content_type;
