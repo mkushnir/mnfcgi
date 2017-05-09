@@ -1,3 +1,4 @@
+#include <assert.h>
 #include <arpa/inet.h>
 
 #include <errno.h>
@@ -761,4 +762,20 @@ mnfcgi_render(mnbytestream_t *bs, mnfcgi_record_t *rec, void *udata)
 
 end:
     return res;
+}
+
+
+void *
+mnfcgi_stdout_get_udata(mnfcgi_record_t *rec)
+{
+    assert(rec->header.type == MNFCGI_STDOUT);
+    return rec->_stdout.udata;
+}
+
+
+void *
+mnfcgi_stderr_get_udata(mnfcgi_record_t *rec)
+{
+    assert(rec->header.type == MNFCGI_STDERR);
+    return rec->_stderr.udata;
 }

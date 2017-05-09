@@ -31,6 +31,7 @@ static mnbytes_t _param_script_name = BYTES_INITIALIZER("SCRIPT_NAME");
 static mnbytes_t _param_query_string = BYTES_INITIALIZER("QUERY_STRING");
 static mnbytes_t _param_content_length = BYTES_INITIALIZER("CONTENT_LENGTH");
 static mnbytes_t _param_content_type = BYTES_INITIALIZER("CONTENT_TYPE");
+static mnbytes_t _param_http_cookie = BYTES_INITIALIZER("HTTP_COOKIE");
 
 /*
  * MNFCGI_REQUEST_METHOD_*
@@ -110,6 +111,11 @@ mnfcgi_request_init(mnfcgi_request_t *req)
               (hash_hashfn_t)bytes_hash,
               (hash_item_comparator_t)bytes_cmp,
               (hash_item_finalizer_t)header_item_fini);
+    hash_init(&req->info.cookie,
+              17,
+              (hash_hashfn_t)bytes_hash,
+              (hash_item_comparator_t)bytes_cmp,
+              (hash_item_finalizer_t)header_item_fini);
     req->info.content_type = NULL;
     req->info.content_length = 0;
     req->udata = NULL;
@@ -146,6 +152,7 @@ mnfcgi_request_fini(mnfcgi_request_t *req)
 
     BYTES_DECREF(&req->info.script_name);
     hash_fini(&req->info.query_terms);
+    hash_fini(&req->info.cookie);
     BYTES_DECREF(&req->info.content_type);
 
     mnfcgi_record_destroy(&req->begin_request);
@@ -262,6 +269,23 @@ mnfcgi_request_get_query_term(mnfcgi_request_t *req,
     return res;
 }
 
+
+mnbytes_t *
+mnfcgi_request_get_cookie(mnfcgi_request_t *req,
+                          mnbytes_t *name)
+{
+    mnbytes_t *res;
+    mnhash_item_t *hit;
+
+    res = NULL;
+    if ((hit = hash_get_item(&req->info.cookie, name)) != NULL) {
+        res = hit->value;
+    }
+
+    return res;
+}
+
+
 void
 mnfcgi_request_fill_info(mnfcgi_request_t *req)
 {
@@ -310,6 +334,10 @@ mnfcgi_request_fill_info(mnfcgi_request_t *req)
         (value = mnfcgi_request_get_param(req,
                                           &_param_query_string)) != NULL)) {
         (void)mrkhttp_parse_qterms(value, '=', '&', &req->info.query_terms);
+    }
+
+    if ((value = mnfcgi_request_get_param(req, &_param_http_cookie)) != NULL) {
+        (void)mrkhttp_parse_kvpbd(value, '=', '&', &req->info.cookie);
     }
 
     if (MRKLIKELY(

@@ -74,6 +74,7 @@ struct _mnfcgi_request {
         mnfcgi_request_method_t method;
         mnbytes_t *script_name;
         mnhash_t query_terms;
+        mnhash_t cookie;
         mnbytes_t *content_type;
         size_t content_length;
     } info;
@@ -88,6 +89,9 @@ typedef ssize_t (*mnfcgi_renderer_t)(union _mnfcgi_record *,
                                      void *);
 #define MNFCGI_RENDERER_T_DEFINED
 #endif
+
+void *mnfcgi_stdout_get_udata(mnfcgi_record_t *);
+void *mnfcgi_stderr_get_udata(mnfcgi_record_t *);
 
 /*
  * mnfcgi_config_t
@@ -126,11 +130,10 @@ int mnfcgi_render_stdout(mnfcgi_request_t *,
                          void *);
 int mnfcgi_flush_out(mnfcgi_request_t *);
 int mnfcgi_finalize_request(mnfcgi_request_t *);
-mnbytes_t *mnfcgi_request_get_param(mnfcgi_request_t *,
-                                    mnbytes_t *);
-mnbytes_t *mnfcgi_request_get_query_term(mnfcgi_request_t *,
-                                         mnbytes_t *);
 void mnfcgi_request_fill_info(mnfcgi_request_t *);
+mnbytes_t *mnfcgi_request_get_param(mnfcgi_request_t *, mnbytes_t *);
+mnbytes_t *mnfcgi_request_get_query_term(mnfcgi_request_t *, mnbytes_t *);
+mnbytes_t *mnfcgi_request_get_cookie(mnfcgi_request_t *, mnbytes_t *);
 
 #define MNFCGI_FADD_IFNOEXISTS  (0x01)
 #define MNFCGI_FADD_OVERRIDE    (0x02)
