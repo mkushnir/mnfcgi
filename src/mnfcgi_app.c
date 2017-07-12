@@ -414,3 +414,11 @@ mnfcgi_app_destroy(mnfcgi_app_t **app)
         *app = NULL;
     }
 }
+
+mnfcgi_stats_t *
+mnfcgi_app_get_stats(mnfcgi_app_t *app)
+{
+    return &app->config.stats;
+}
+
+

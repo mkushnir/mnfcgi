@@ -36,6 +36,15 @@ typedef struct _mnfcgi_config mnfcgi_config_t;
 #define MNFCGI_CONFIG_T_DEFINED
 #endif
 
+#ifndef MNFCGI_STATS_T_DEFINED
+struct _mnfcgi_stats {
+    int nthreads;
+};
+typedef struct _mnfcgi_stats mnfcgi_stats_t;
+#define MNFCGI_STATS_T_DEFINED
+#endif
+
+
 #ifndef MNFCGI_REQUEST_SCHEME_T_DEFINED
 typedef enum _mnfcgi_request_scheme {
     MNFCGI_REQUEST_SCHEME_HTTP =    0,
@@ -99,6 +108,7 @@ void *mnfcgi_stderr_get_udata(mnfcgi_record_t *);
 void mnfcgi_config_init(mnfcgi_config_t *, const char *, const char *, int, int);
 void mnfcgi_config_fini(mnfcgi_config_t *);
 int mnfcgi_serve(mnfcgi_config_t *);
+mnfcgi_stats_t *mnfcgi_config_get_stats(mnfcgi_config_t *);
 
 
 /*

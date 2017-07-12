@@ -672,7 +672,7 @@ mnfcgi_config_init(mnfcgi_config_t *config,
     config->stdout_render = NULL;
     config->stderr_render = NULL;
     config->udata = NULL;
-
+    config->stats.nthreads = 0;
 }
 
 
@@ -685,6 +685,13 @@ mnfcgi_config_fini(mnfcgi_config_t *config)
     }
     BYTES_DECREF(&config->host);
     BYTES_DECREF(&config->port);
+}
+
+
+mnfcgi_stats_t *
+mnfcgi_config_get_stats(mnfcgi_config_t *config)
+{
+    return &config->stats;
 }
 
 
@@ -891,7 +898,9 @@ end:
 static void
 _mnfcgi_handle_socket(mnfcgi_ctx_t *ctx)
 {
+#ifdef TRRET_DEBUG
     CTRACE("started serving request at fd %d", ctx->fd);
+#endif
     while (true) {
         mnfcgi_record_t *rec;
         mnhash_item_t *hit;
@@ -1258,7 +1267,9 @@ err:
         break;
     }
 
+#ifdef TRRET_DEBUG
     CTRACE("finished serving request at fd %d", ctx->fd);
+#endif
 }
 
 
@@ -1372,12 +1383,14 @@ mnfcgi_handle_socket(UNUSED int argc, void **argv)
     int fd;
 
     config = argv[0];
+    ++config->stats.nthreads;
     fd = (int)(intptr_t)argv[1];
     mnfcgi_ctx_init(&ctx, config, fd);
     ctx.thread = mrkthr_me();
     _mnfcgi_handle_socket(&ctx);
     ctx.thread = NULL;
     mnfcgi_ctx_fini(&ctx);
+    --config->stats.nthreads;
     return 0;
 }
 

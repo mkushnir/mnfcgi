@@ -73,6 +73,7 @@ int mnfcgi_app_register_endpoint(mnfcgi_app_t *,
 #define mnfcgi_app_serve(app) (mnfcgi_serve((mnfcgi_config_t *)app))
 
 void mnfcgi_app_destroy(mnfcgi_app_t **);
+mnfcgi_stats_t *mnfcgi_app_get_stats(mnfcgi_app_t *);
 
 
 int mnfcgi_app_params_complete_select_exact(mnfcgi_request_t *, void *);

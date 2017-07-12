@@ -253,6 +253,11 @@ typedef struct _mnfcgi_responder {
 /*
  * Context
  */
+
+typedef struct _mnfcgi_stats {
+    int nthreads;
+} mnfcgi_stats_t;
+#define MNFCGI_STATS_T_DEFINED
 typedef struct _mnfcgi_config {
     mnbytes_t *host;
     mnbytes_t *port;
@@ -268,6 +273,7 @@ typedef struct _mnfcgi_config {
     mnfcgi_renderer_t stderr_render;
     mnfcgi_renderer_t end_request_render;
     void *udata;
+    mnfcgi_stats_t stats;
 } mnfcgi_config_t;
 #define MNFCGI_CONFIG_T_DEFINED
 
