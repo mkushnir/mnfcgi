@@ -70,6 +70,18 @@ AC_CONFIG_HEADERS(config.h)
 AC_FUNC_MALLOC
 AC_FUNC_REALLOC
 
+AC_CHECK_FUNCS([memset strchr strdup srandomdev])
+AC_CHECK_HEADERS([arpa/inet.h limits.h malloc.h stddef.h sys/socket.h])
+AC_CHECK_HEADER_STDBOOL
+AC_TYPE_OFF_T
+AC_TYPE_SIZE_T
+AC_TYPE_SSIZE_T
+AC_TYPE_UINT16_T
+AC_TYPE_UINT32_T
+AC_TYPE_UINT64_T
+AC_TYPE_UINT8_T
+
+
 AC_PRESERVE_HELP_ORDER
 
 AC_ARG_ENABLE(debug,
@@ -77,6 +89,11 @@ AC_ARG_ENABLE(debug,
                              [Enable debug build (default=no)]),
               [AM_CONDITIONAL([DEBUG], [enable_debug=yes])],
               [AM_CONDITIONAL([DEBUG], [test "$enable_debug" = "yes"])])
+
+AC_ARG_WITH(mrkpq,
+            AC_HELP_STRING([--with-mrkpq], [Build libmrkpq dependencies (default=no)]),
+            [AM_CONDITIONAL([MRKPQ], [with_mrkpq=yes])],
+            [AM_CONDITIONAL([MRKPQ], [test "$with_mrkpq" = "yes"])])
 
 AM_CONDITIONAL([LINUX], [echo $build_os | grep linux >/dev/null])
 AM_CONDITIONAL([FREEBSD], [echo $build_os | grep freebsd >/dev/null])

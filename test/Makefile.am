@@ -11,7 +11,10 @@ AM_MAKEFLAGS = -s
 #   - noinst_HEADERS
 noinst_HEADERS = unittest.h testmy.h testoauth.h
 
-noinst_PROGRAMS=gendata testfoo testbar
+noinst_PROGRAMS=gendata testfoo
+if MRKPQ
+noinst_PROGRAMS+= testbar
+endif
 
 BUILT_SOURCES = diag.c diag.h gen-diag
 EXTRA_DIST = $(diags) gen-diag runscripts
@@ -35,9 +38,10 @@ gendata_LDFLAGS = -L$(libdir) -lmrkcommon
 nodist_testfoo_SOURCES = diag.c
 testfoo_SOURCES = ../src/mnfcgi_app.c testfoo.c
 testfoo_CFLAGS = $(DEBUG_FLAGS) -DUNITTEST -Wall -Wextra -Werror -std=c99 @_GNU_SOURCE_MACRO@ -I$(top_srcdir)/test -I$(top_srcdir)/src -I$(top_srcdir) -I$(includedir)
-testfoo_LDFLAGS = -L$(top_srcdir)/src/.libs -lmnfcgi -L$(libdir) -lmrkthr -lmrkcommon
+testfoo_LDFLAGS = -L$(top_srcdir)/src/.libs -lmnfcgi -L$(libdir) -lmrkapp -lmrkthr -lmrkcommon
 #testfoo_LDFLAGS = -L$(top_srcdir)/src/.libs -lmnfcgi
 
+if MRKPQ
 nodist_testbar_SOURCES = diag.c
 testbar_SOURCES = testbar.c \
 		  testoauth.c \
@@ -51,6 +55,7 @@ testbar_SOURCES = testbar.c \
 testbar_CFLAGS = $(DEBUG_FLAGS) -Wall -Wextra -Werror -std=c99 @_GNU_SOURCE_MACRO@ -I$(top_srcdir)/test -I$(top_srcdir)/src -I$(top_srcdir) -I$(includedir)
 testbar_LDFLAGS = -L$(top_srcdir)/src/.libs -lmnfcgi -L$(libdir) -lmrkpq -lmrkthr -lmrkcommon
 #testbar_LDFLAGS = -L$(top_srcdir)/src/.libs -lmnfcgi
+endif
 
 diag.c diag.h: $(diags) gen-diag
 	$(AM_V_GEN) cat $(diags) | sort -u | ./gen-diag mnfcgi

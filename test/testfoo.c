@@ -109,7 +109,7 @@ mnbytes_t * _mnfcgi_app_get_allowed_methods(mnfcgi_app_t *app, mnbytes_t *script
 static void
 test1(void)
 {
-    int res;
+    UNUSED int res;
     mnfcgi_app_t *app;
     BYTES_ALLOCA(__t0, "/t0");
     BYTES_ALLOCA(__t1, "/t1");
