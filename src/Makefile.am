@@ -7,7 +7,7 @@
 #   - noinst_HEADERS
 
 BUILT_SOURCES = diag.c diag.h
-EXTRA_DIST = $(diags) gen-diag
+EXTRA_DIST = $(diags)
 CLEANFILES = $(BUILT_SOURCES) *.core core
 #CLEANFILES += *.in
 AM_MAKEFLAGS = -s
@@ -30,12 +30,12 @@ endif
 libmnfcgi_la_CFLAGS = $(DEBUG_FLAGS) -Wall -Wextra -Werror -std=c99 @_GNU_SOURCE_MACRO@ -I$(top_srcdir)/src -I$(top_srcdir) -I$(includedir)
 
 #libmnfcgi_la_LDFLAGS = -version-info 0:0:0
-libmnfcgi_la_LDFLAGS = -version-info 0:0:0 -L$(libdir) -lmrkapp -lmrkthr -lmrkcommon
+libmnfcgi_la_LDFLAGS = -version-info 0:0:0 -L$(libdir) -lmrkapp -lmrkthr -lmrkcommon -lmndiag
 #libmnfcgi_la_LDFLAGS = -all-static
 #libmnfcgi_la_LDFLAGS = -all-static -Wl,-Bdynamic,-L$(libdir),-lfoo -lqwe,-Bstatic
 
-diag.c diag.h: $(diags) gen-diag
-	$(AM_V_GEN) cat $(diags) | sort -u | ./gen-diag mnfcgi
+diag.c diag.h: $(diags)
+	$(AM_V_GEN) cat $(diags) | sort -u >diag.txt.tmp && mndiagen -S diag.txt.tmp -L mnfcgi -H diag.h -C diag.c *.[ch]
 
 run: all
 	for i in $(bin_PROGRAMS); do if test -x ./$$i; then LD_LIBRARY_PATH=$(libdir) ./$$i; fi; done;

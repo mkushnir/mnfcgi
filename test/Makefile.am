@@ -16,12 +16,12 @@ if MRKPQ
 noinst_PROGRAMS+= testbar
 endif
 
-BUILT_SOURCES = diag.c diag.h gen-diag
-EXTRA_DIST = $(diags) gen-diag runscripts
+BUILT_SOURCES = diag.c diag.h
+EXTRA_DIST = diag.txt runscripts
 
 #noinst_HEADERS = ../src/mnfcgi.h
 
-diags = diag.txt
+diags = ../src/diag.txt diag.txt
 
 if DEBUG
 DEBUG_FLAGS = -g -O0 @CC_DEBUG@
@@ -32,13 +32,13 @@ endif
 nodist_gendata_SOURCES = diag.c
 gendata_SOURCES = gendata.c
 gendata_CFLAGS = $(DEBUG_FLAGS) -Wall -Wextra -Werror -std=c99 @_GNU_SOURCE_MACRO@ -I$(top_srcdir)/test -I$(top_srcdir)/src -I$(top_srcdir) -I$(includedir)
-gendata_LDFLAGS = -L$(libdir) -lmrkcommon 
+gendata_LDFLAGS = -L$(libdir) -lmrkcommon -lmndiag
 #gendata_LDFLAGS = 
 
 nodist_testfoo_SOURCES = diag.c
 testfoo_SOURCES = ../src/mnfcgi_app.c testfoo.c
 testfoo_CFLAGS = $(DEBUG_FLAGS) -DUNITTEST -Wall -Wextra -Werror -std=c99 @_GNU_SOURCE_MACRO@ -I$(top_srcdir)/test -I$(top_srcdir)/src -I$(top_srcdir) -I$(includedir)
-testfoo_LDFLAGS = -L$(top_srcdir)/src/.libs -lmnfcgi -L$(libdir) -lmrkapp -lmrkthr -lmrkcommon
+testfoo_LDFLAGS = -L$(top_srcdir)/src/.libs -lmnfcgi -L$(libdir) -lmrkapp -lmrkthr -lmrkcommon -lmndiag
 #testfoo_LDFLAGS = -L$(top_srcdir)/src/.libs -lmnfcgi
 
 if MRKPQ
@@ -53,12 +53,12 @@ testbar_SOURCES = testbar.c \
 		  testmy.c
 
 testbar_CFLAGS = $(DEBUG_FLAGS) -Wall -Wextra -Werror -std=c99 @_GNU_SOURCE_MACRO@ -I$(top_srcdir)/test -I$(top_srcdir)/src -I$(top_srcdir) -I$(includedir)
-testbar_LDFLAGS = -L$(top_srcdir)/src/.libs -lmnfcgi -L$(libdir) -lmrkpq -lmrkthr -lmrkcommon
+testbar_LDFLAGS = -L$(top_srcdir)/src/.libs -lmnfcgi -L$(libdir) -lmrkpq -lmrkthr -lmrkcommon -lmndiag
 #testbar_LDFLAGS = -L$(top_srcdir)/src/.libs -lmnfcgi
 endif
 
-diag.c diag.h: $(diags) gen-diag
-	$(AM_V_GEN) cat $(diags) | sort -u | ./gen-diag mnfcgi
+diag.c diag.h: $(diags)
+	$(AM_V_GEN) cat $(diags) | sort -u >diag.txt.tmp && mndiagen -S diag.txt.tmp -L mnfcgi -H diag.h -C diag.c ../*.[ch] ./*.[ch]
 
 testfoo-run: testfoo
 	@if test -x $>; \
