@@ -58,7 +58,7 @@ testbar_LDFLAGS = -L$(top_srcdir)/src/.libs -lmnfcgi -L$(libdir) -lmrkpq -lmrkth
 endif
 
 diag.c diag.h: $(diags)
-	$(AM_V_GEN) cat $(diags) | sort -u >diag.txt.tmp && mndiagen -S diag.txt.tmp -L mnfcgi -H diag.h -C diag.c ../*.[ch] ./*.[ch]
+	$(AM_V_GEN) cat $(diags) | sort -u >diag.txt.tmp && mndiagen -v -S diag.txt.tmp -L mnfcgi -H diag.h -C diag.c ../*.[ch] ./*.[ch]
 
 testfoo-run: testfoo
 	@if test -x $>; \
