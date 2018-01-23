@@ -1,6 +1,7 @@
 #include <stdlib.h>
 #include <stdbool.h>
 
+#include <mrkcommon/util.h>
 #include "testoauth.h"
 
 #include "diag.h"
@@ -73,7 +74,7 @@ static int
 mrkpq_cache_entry_cmp_mru(mrkpq_cache_entry_t **a, mrkpq_cache_entry_t **b)
 {
     assert(*a != NULL && *b != NULL);
-    return (*a)->ts > (*b)->ts ? 1 : (*a)->ts < (*b)->ts ? -1 : 0;
+    return MNCMP((*a)->ts, (*b)->ts);
 }
 
 

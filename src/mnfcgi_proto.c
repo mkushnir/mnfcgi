@@ -7,6 +7,7 @@
 
 #include <mrkcommon/bytestream.h>
 #include <mrkcommon/hash.h>
+#include <mrkcommon/util.h>
 #include <mrkthr.h>
 
 #include "mnfcgi_private.h"
@@ -80,7 +81,7 @@ mnfcgi_request_item_cmp(void *a, void *b)
 {
     uint16_t ra = (uint16_t)(uintptr_t)a;
     uint16_t rb = (uint16_t)(uintptr_t)b;
-    return ra < rb ? -1 : ra > rb ? 1 : 0;
+    return MNCMP(ra, rb);
 }
 
 
