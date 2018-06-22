@@ -346,6 +346,13 @@ mnfcgi_app_init(mnfcgi_app_t *app,
 }
 
 
+void
+mnfcgi_app_incref(mnfcgi_app_t *app)
+{
+    ++app->config.nref;
+}
+
+
 int
 mnfcgi_app_register_endpoint(mnfcgi_app_t *app,
                              mnfcgi_app_endpoint_table_t *table)
@@ -396,6 +403,7 @@ mnfcgi_app_new(const char *host,
         goto err;
     }
 
+    MNFCGI_CONFIG_INCREF(&res->config);
 end:
     return res;
 
@@ -409,8 +417,10 @@ void
 mnfcgi_app_destroy(mnfcgi_app_t **app)
 {
     if (*app != NULL) {
-        mnfcgi_app_fini(*app);
-        free(*app);
+        if (--(*app)->config.nref <= 0) {
+            mnfcgi_app_fini(*app);
+            free(*app);
+        }
         *app = NULL;
     }
 }

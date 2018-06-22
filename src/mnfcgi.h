@@ -105,8 +105,6 @@ void *mnfcgi_stderr_get_udata(mnfcgi_record_t *);
 /*
  * mnfcgi_config_t
  */
-void mnfcgi_config_init(mnfcgi_config_t *, const char *, const char *, int, int);
-void mnfcgi_config_fini(mnfcgi_config_t *);
 int mnfcgi_serve(mnfcgi_config_t *);
 mnfcgi_stats_t *mnfcgi_config_get_stats(mnfcgi_config_t *);
 

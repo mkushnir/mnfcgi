@@ -259,6 +259,7 @@ typedef struct _mnfcgi_stats {
 } mnfcgi_stats_t;
 #define MNFCGI_STATS_T_DEFINED
 typedef struct _mnfcgi_config {
+    int64_t nref;
     mnbytes_t *host;
     mnbytes_t *port;
     int max_conn;
@@ -277,6 +278,18 @@ typedef struct _mnfcgi_config {
 } mnfcgi_config_t;
 #define MNFCGI_CONFIG_T_DEFINED
 
+#define MNFCGI_CONFIG_INCREF(config) (++(config)->nref)
+
+#define MNFCGI_CONFIG_DECREF(pconfig)          \
+do {                                           \
+    if (*(pconfig) != NULL) {                  \
+        if (--((*(pconfig))->nref) <= 0) {     \
+            mnfcgi_config_fini(*(pconfig));    \
+            free(*(pconfig));                  \
+        }                                      \
+        *(pconfig) = NULL;                     \
+    }                                          \
+} while (0)                                    \
 
 /*
  * lifetime limited to the execution scope of
@@ -374,6 +387,9 @@ mnfcgi_record_t *mnfcgi_parse(mnbytestream_t *, void *);
 
 #define MNFCGI_RENDER_ERROR (-1)
 int mnfcgi_render(mnbytestream_t *, mnfcgi_record_t *, void *);
+
+void mnfcgi_config_fini(mnfcgi_config_t *);
+void mnfcgi_config_init(mnfcgi_config_t *, const char *, const char *, int, int);
 
 #ifdef __cplusplus
 }

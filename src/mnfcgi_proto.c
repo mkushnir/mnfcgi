@@ -657,6 +657,7 @@ mnfcgi_config_init(mnfcgi_config_t *config,
     assert(port != NULL);
     assert(max_conn > 0);
 
+    config->nref = 0;
     config->host = bytes_new_from_str(host);
     BYTES_INCREF(config->host);
 
@@ -705,6 +706,7 @@ mnfcgi_ctx_init(mnfcgi_ctx_t *ctx,
                 int fd)
 {
     ctx->config = config;
+    MNFCGI_CONFIG_INCREF(ctx->config);
     ctx->thread = NULL;
     ctx->fd = fd;
     ctx->fp = (void *)(intptr_t)fd;
@@ -735,6 +737,7 @@ mnfcgi_ctx_fini(mnfcgi_ctx_t *ctx)
     hash_fini(&ctx->requests);
     bytestream_fini(&ctx->in);
     bytestream_fini(&ctx->out);
+    MNFCGI_CONFIG_DECREF(&ctx->config);
 }
 
 
@@ -1390,8 +1393,8 @@ mnfcgi_handle_socket(UNUSED int argc, void **argv)
     ctx.thread = mrkthr_me();
     _mnfcgi_handle_socket(&ctx);
     ctx.thread = NULL;
-    mnfcgi_ctx_fini(&ctx);
     --config->stats.nthreads;
+    mnfcgi_ctx_fini(&ctx);
     return 0;
 }
 
