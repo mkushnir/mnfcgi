@@ -14,7 +14,7 @@
 #include <mrkcommon/hash.h>
 #include <mrkcommon/bytestream.h>
 
-#include <mrkhttp.h>
+#include <mnhttp.h>
 
 #ifdef __cplusplus
 extern "C" {
