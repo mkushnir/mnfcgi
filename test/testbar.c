@@ -304,7 +304,7 @@ main(int argc, char **argv)
             exit(0);
 
         case 'V':
-            printf("%s\n", VERSION);
+            printf("%s\n", PACKAGE_STRING);
             exit(0);
 
         case 0:
