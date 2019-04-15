@@ -344,6 +344,7 @@ typedef struct _mnfcgi_request {
         mnfcgi_request_scheme_t scheme;
         mnfcgi_request_method_t method;
         mnbytes_t *script_name;
+        mnbytes_t *path_info;
         mnhash_t query_terms;
         mnhash_t cookie;
         mnbytes_t *content_type;

@@ -19,7 +19,7 @@ mnfcgi_app_begin_request(mnfcgi_record_t *rec,
     assert(app != NULL);
     req->state = MNFCGI_REQUEST_STATE_BEGIN;
     if (app->callback_table.begin_request != NULL &&
-        app->callback_table.begin_request(req, NULL) != 0) {
+        app->callback_table.begin_request(req, app->config.udata) != 0) {
         return MNFCGI_USER_ERROR_BEGIN_REQUEST;
     }
     return rec->header.rsz;
@@ -36,7 +36,7 @@ mnfcgi_app_params(mnfcgi_record_t *rec, UNUSED mnbytestream_t *bs, void *udata)
     if (rec->header.rsz == 0) {
         req->state = MNFCGI_REQUEST_STATE_PARAMS_DONE;
         if (app->callback_table.params_complete != NULL &&
-            app->callback_table.params_complete(req, NULL) != 0) {
+            app->callback_table.params_complete(req, app->config.udata) != 0) {
             return MNFCGI_USER_ERROR_PARAMS;
         }
         req->state = MNFCGI_REQUEST_STATE_HEADERS_ALLOWED;
@@ -60,7 +60,7 @@ mnfcgi_app_stdin(mnfcgi_record_t *rec, UNUSED mnbytestream_t *bs, void *udata)
     } else {
         /* end of stdin */
         if (app->callback_table.stdin_end != NULL &&
-                app->callback_table.stdin_end(req, NULL) != 0) {
+                app->callback_table.stdin_end(req, app->config.udata) != 0) {
             return MNFCGI_USER_ERROR_STDIN;
         }
     }
@@ -80,7 +80,7 @@ mnfcgi_app_end_request(UNUSED mnfcgi_record_t *rec,
 
     assert(app != NULL);
     if (app->callback_table.end_request != NULL &&
-            app->callback_table.end_request(req, NULL) != 0) {
+            app->callback_table.end_request(req, app->config.udata) != 0) {
         /* silence it */
     }
     return 0;
@@ -172,7 +172,39 @@ mnfcgi_app_params_complete_select_exact(mnfcgi_request_t *req,
                                         UNUSED void *udata)
 {
     mnhash_item_t *hit;
-    UNUSED mnhash_iter_t it;
+    mnbytes_t *key;
+    mnfcgi_app_t *app;
+
+    mnfcgi_request_fill_info(req);
+
+    app = (mnfcgi_app_t *)req->ctx->config;
+    assert(app != NULL);
+
+    key = bytes_printf("%s%s",
+            BDATASAFE(req->info.script_name),
+            BDATASAFE(req->info.path_info));
+
+    if ((hit = hash_get_item(&app->endpoint_tables, key)) == NULL) {
+        /* 404 */
+        mnfcgi_app_error(req, 404, &_not_found);
+    } else {
+        mnfcgi_app_endpoint_table_t *t;
+
+        t = hit->value;
+        assert(t != NULL);
+        req->udata = t->method_callback[req->info.method];
+    }
+
+    //CTRACE("params ...");
+    return 0;
+}
+
+
+int
+mnfcgi_app_params_complete_select_exact_script_name(
+        mnfcgi_request_t *req, UNUSED void *udata)
+{
+    mnhash_item_t *hit;
     mnfcgi_app_t *app;
 
     mnfcgi_request_fill_info(req);
@@ -183,6 +215,37 @@ mnfcgi_app_params_complete_select_exact(mnfcgi_request_t *req,
     if (req->info.script_name == NULL ||
         (hit = hash_get_item(&app->endpoint_tables,
                              req->info.script_name)) == NULL) {
+        /* 404 */
+        mnfcgi_app_error(req, 404, &_not_found);
+
+    } else {
+        mnfcgi_app_endpoint_table_t *t;
+
+        t = hit->value;
+        assert(t != NULL);
+        req->udata = t->method_callback[req->info.method];
+    }
+
+    //CTRACE("params ...");
+    return 0;
+}
+
+
+int
+mnfcgi_app_params_complete_select_exact_path_info(
+        mnfcgi_request_t *req, UNUSED void *udata)
+{
+    mnhash_item_t *hit;
+    mnfcgi_app_t *app;
+
+    mnfcgi_request_fill_info(req);
+
+    app = (mnfcgi_app_t *)req->ctx->config;
+    assert(app != NULL);
+
+    if (req->info.path_info == NULL ||
+        (hit = hash_get_item(&app->endpoint_tables,
+                             req->info.path_info)) == NULL) {
         /* 404 */
         mnfcgi_app_error(req, 404, &_not_found);
 
@@ -432,3 +495,8 @@ mnfcgi_app_get_stats(mnfcgi_app_t *app)
 }
 
 
+void
+mnfcgi_app_set_udata(mnfcgi_app_t *app, void *udata)
+{
+    app->config.udata = udata;
+}

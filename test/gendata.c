@@ -69,7 +69,7 @@ main(UNUSED int argc, char **argv)
 {
     char ch;
 
-#ifdef HAVE_MALLOC_H
+#ifdef HAVE_MALLOPT
 #   ifndef NDEBUG
     /*
      * malloc options

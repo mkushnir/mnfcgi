@@ -74,9 +74,12 @@ int mnfcgi_app_register_endpoint(mnfcgi_app_t *,
 
 void mnfcgi_app_destroy(mnfcgi_app_t **);
 mnfcgi_stats_t *mnfcgi_app_get_stats(mnfcgi_app_t *);
+void mnfcgi_app_set_udata(mnfcgi_app_t *, void *);
 
 
 int mnfcgi_app_params_complete_select_exact(mnfcgi_request_t *, void *);
+int mnfcgi_app_params_complete_select_exact_script_name(mnfcgi_request_t *, void *);
+int mnfcgi_app_params_complete_select_exact_path_info(mnfcgi_request_t *, void *);
 mnbytes_t *mnfcgi_app_get_allowed_methods(mnfcgi_request_t *);
 
 void mnfcgi_app_error(mnfcgi_request_t *, int, mnbytes_t *);

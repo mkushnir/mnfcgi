@@ -29,6 +29,7 @@ static mnbytes_t _http = BYTES_INITIALIZER("http");
 static mnbytes_t _https = BYTES_INITIALIZER("https");
 static mnbytes_t _param_request_method = BYTES_INITIALIZER("REQUEST_METHOD");
 static mnbytes_t _param_script_name = BYTES_INITIALIZER("SCRIPT_NAME");
+static mnbytes_t _param_path_info = BYTES_INITIALIZER("PATH_INFO");
 static mnbytes_t _param_query_string = BYTES_INITIALIZER("QUERY_STRING");
 static mnbytes_t _param_content_length = BYTES_INITIALIZER("CONTENT_LENGTH");
 static mnbytes_t _param_content_type = BYTES_INITIALIZER("CONTENT_TYPE");
@@ -107,6 +108,7 @@ mnfcgi_request_init(mnfcgi_request_t *req)
     req->info.scheme = MNFCGI_REQUEST_SCHEME_HTTP;
     req->info.method = MNFCGI_REQUEST_METHOD_GET;
     req->info.script_name = NULL;
+    req->info.path_info = NULL;
     hash_init(&req->info.query_terms,
               31,
               (hash_hashfn_t)bytes_hash,
@@ -152,6 +154,7 @@ mnfcgi_request_fini(mnfcgi_request_t *req)
     mnfcgi_header_t *h;
 
     BYTES_DECREF(&req->info.script_name);
+    BYTES_DECREF(&req->info.path_info);
     hash_fini(&req->info.query_terms);
     hash_fini(&req->info.cookie);
     BYTES_DECREF(&req->info.content_type);
@@ -328,6 +331,13 @@ mnfcgi_request_fill_info(mnfcgi_request_t *req)
         (value = mnfcgi_request_get_param(req,
                                           &_param_script_name)) != NULL)) {
         req->info.script_name = value;
+        BYTES_INCREF(value);
+    }
+
+    if (MRKLIKELY(
+        (value = mnfcgi_request_get_param(req,
+                                          &_param_path_info)) != NULL)) {
+        req->info.path_info = value;
         BYTES_INCREF(value);
     }
 
