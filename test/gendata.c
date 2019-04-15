@@ -6,6 +6,8 @@
 #include <stdio.h>
 #include <string.h>
 
+#include "config.h"
+
 #ifdef HAVE_MALLOC_H
 #   include <malloc.h>
 #endif
