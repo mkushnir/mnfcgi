@@ -131,9 +131,9 @@ testoauth_verify_cred(const char *ident, const char *cred, mnbytes_t **code)
     }
 
     rparams.coden = bytes_printf("code:%ld", mrkthr_get_now_ticks_precise());
-    qp2[0] = (char *)BDATA(rparams.coden);
-    qp2[1] = (char *)BDATA(rparams.code0);
-    qp2[2] = (char *)BDATA(rparams.pkey);
+    qp2[0] = BCDATA(rparams.coden);
+    qp2[1] = BCDATA(rparams.code0);
+    qp2[2] = BCDATA(rparams.pkey);
 
 
     if (MRKPQ_CACHE_EXEC3(

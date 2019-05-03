@@ -544,12 +544,12 @@ mnfcgi_render_kvp(mnbytestream_t *bs, mnbytes_t *key, mnbytes_t *value)
     MNFCGI_RENDER_INT(bs, value->sz - 1);
     if (MRKUNLIKELY(bytestream_cat(bs,
                                    key->sz - 1,
-                                   (char *)BDATA(key)) < 0)) {
+                                   BCDATA(key)) < 0)) {
         return -1;
     }
     if (MRKUNLIKELY(bytestream_cat(bs,
                                    value->sz - 1,
-                                   (char *)BDATA(value)) < 0)) {
+                                   BCDATA(value)) < 0)) {
         return -1;
     }
     return eod = SEOD(bs);

@@ -59,8 +59,8 @@ check_authorization(mnbytes_t *response_type,
         goto end;
     }
 
-    if (testoauth_verify_client_nonsecure((char *)BDATA(client_id),
-                                          (char *)BDATA(redirect_uri)) != 0) {
+    if (testoauth_verify_client_nonsecure(BCDATA(client_id),
+                                          BCDATA(redirect_uri)) != 0) {
         goto end;
     }
     res |= CHECK_AUTHORIZATION_REDIRECT_URI_OK;
@@ -72,12 +72,12 @@ check_authorization(mnbytes_t *response_type,
         if (bytes_base64_decode_url(a) == 0) {
             char *colon;
 
-            if ((colon = strchr((char *)BDATA(a), ':')) != NULL) {
+            if ((colon = strchr(BCDATA(a), ':')) != NULL) {
                 *colon = '\0';
 
                 *code = NULL;
                 if (testoauth_verify_cred(
-                        (const char *)BDATA(a), colon + 1, code) == 0) {
+                        BCDATA(a), colon + 1, code) == 0) {
                     res |= CHECK_AUTHORIZATION_REDIRECT_CREDS_OK;
                 }
 

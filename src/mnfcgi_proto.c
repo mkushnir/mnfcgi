@@ -354,7 +354,7 @@ mnfcgi_request_fill_info(mnfcgi_request_t *req)
     if (MRKLIKELY(
         (value = mnfcgi_request_get_param(req,
                                           &_param_content_length)) != NULL)) {
-        req->info.content_length = strtoimax((char *)BDATA(value), NULL, 10);
+        req->info.content_length = strtoimax(BCDATA(value), NULL, 10);
     }
 
     if (MRKLIKELY(
@@ -1415,8 +1415,8 @@ mnfcgi_serve(mnfcgi_config_t *config)
     int res;
     res = 0;
 
-    if ((config->fd = mrkthr_socket_bind((char *)BDATA(config->host),
-                                  (char *)BDATA(config->port),
+    if ((config->fd = mrkthr_socket_bind(BCDATA(config->host),
+                                  BCDATA(config->port),
                                   PF_INET)) == -1) {
         res = MNFCGI_SERVE + 1;
         goto end;

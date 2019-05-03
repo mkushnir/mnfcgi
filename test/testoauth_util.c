@@ -88,7 +88,7 @@ mrkpq_cache_worker(UNUSED int argc, void **argv)
     mrkpq_cache_t *cache = argv[0];
 
     if ((cache->conn = mrkpq_connect_str(
-                    (char *)BDATA(cache->connstr))) == NULL) {
+                    BCDATA(cache->connstr))) == NULL) {
         res = MRKPQ_CACHE_WORKER + 1;
         goto end;
     }
@@ -200,8 +200,8 @@ mrkpq_cache_exec(mrkpq_cache_t *cache,
         hash_set_item(&cache->prepared, ce, NULL);
 
         if (mrkpq_prepare(cache->conn,
-                          (char *)BDATA(ce->stmt),
-                          (char *)BDATA(ce->stmt),
+                          BCDATA(ce->stmt),
+                          BCDATA(ce->stmt),
                           nparams,
                           NULL,
                           0,
@@ -217,7 +217,7 @@ mrkpq_cache_exec(mrkpq_cache_t *cache,
     }
 
     if (mrkpq_query_prepared(cache->conn,
-                             (char *)BDATA(ce->stmt),
+                             BCDATA(ce->stmt),
                              nparams,
                              params,
                              NULL,
