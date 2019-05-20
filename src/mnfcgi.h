@@ -10,6 +10,8 @@
 #include <stdlib.h>
 #include <time.h>
 
+#include <mndiag.h>
+
 #include <mrkcommon/bytes.h>
 #include <mrkcommon/hash.h>
 #include <mrkcommon/bytestream.h>
@@ -109,28 +111,75 @@ void *mnfcgi_stderr_get_udata(mnfcgi_record_t *);
 int mnfcgi_serve(mnfcgi_config_t *);
 mnfcgi_stats_t *mnfcgi_config_get_stats(mnfcgi_config_t *);
 
+/*
+ * diag.txt
+ */
+#ifndef MNDIAG_CLASS_MNFCGI_MNFCGI_ERROR
+#define MNDIAG_CLASS_MNFCGI_MNFCGI_ERROR (128)
+#endif
 
 /*
  * request
  */
-#define MNFCGI_REQUEST_COMPLETED (-1)
-#define MNFCGI_IO_ERROR (-2)
-#define MNFCGI_PAYLOAD_TOO_LARGE (-3)
-#define MNFCGI_USER_ERROR_BEGIN_REQUEST (-4)
-#define MNFCGI_USER_ERROR_PARAMS (-5)
-#define MNFCGI_USER_ERROR_STDIN (-6)
-#define MNFCGI_REQUEST_STATE    (-7)
+#define MNFCGI_REQUEST_COMPLETED                               \
+    MNDIAG_PUBLIC_CODE(MNDIAG_LIBRARY_MNFCGI,                  \
+                       MNDIAG_CLASS_MNFCGI_MNFCGI_ERROR,       \
+                       1)                                      \
 
-#define MNFCHI_ESTR(e)                                                         \
-((e) == MNFCGI_REQUEST_COMPLETED ? "MNFCGI_REQUEST_COMPLETED" :                \
- (e) == MNFCGI_IO_ERROR ? "MNFCGI_IO_ERROR" :                                  \
- (e) == MNFCGI_PAYLOAD_TOO_LARGE ? "MNFCGI_PAYLOAD_TOO_LARGE" :                \
- (e) == MNFCGI_USER_ERROR_BEGIN_REQUEST ? "MNFCGI_USER_ERROR_BEGIN_REQUEST" :  \
- (e) == MNFCGI_USER_ERROR_PARAMS ? "MNFCGI_USER_ERROR_PARAMS" :                \
- (e) == MNFCGI_USER_ERROR_STDIN ? "MNFCGI_USER_ERROR_STDIN" :                  \
- (e) == MNFCGI_REQUEST_STATE ? "MNFCGI_REQUEST_STATE" :                        \
- "<unknown>"                                                                   \
-)                                                                              \
+
+#define MNFCGI_IO_ERROR                                        \
+    MNDIAG_PUBLIC_CODE(MNDIAG_LIBRARY_MNFCGI,                  \
+                       MNDIAG_CLASS_MNFCGI_MNFCGI_ERROR,       \
+                       2)                                      \
+
+
+#define MNFCGI_PAYLOAD_TOO_LARGE                               \
+    MNDIAG_PUBLIC_CODE(MNDIAG_LIBRARY_MNFCGI,                  \
+                       MNDIAG_CLASS_MNFCGI_MNFCGI_ERROR,       \
+                       3)                                      \
+
+
+#define MNFCGI_USER_ERROR_BEGIN_REQUEST                        \
+    MNDIAG_PUBLIC_CODE(MNDIAG_LIBRARY_MNFCGI,                  \
+                       MNDIAG_CLASS_MNFCGI_MNFCGI_ERROR,       \
+                       4)                                      \
+
+
+#define MNFCGI_USER_ERROR_PARAMS                               \
+    MNDIAG_PUBLIC_CODE(MNDIAG_LIBRARY_MNFCGI,                  \
+                       MNDIAG_CLASS_MNFCGI_MNFCGI_ERROR,       \
+                       5)                                      \
+
+
+#define MNFCGI_USER_ERROR_STDIN                                \
+    MNDIAG_PUBLIC_CODE(MNDIAG_LIBRARY_MNFCGI,                  \
+                       MNDIAG_CLASS_MNFCGI_MNFCGI_ERROR,       \
+                       6)                                      \
+
+
+#define MNFCGI_REQUEST_STATE                                   \
+    MNDIAG_PUBLIC_CODE(MNDIAG_LIBRARY_MNFCGI,                  \
+                       MNDIAG_CLASS_MNFCGI_MNFCGI_ERROR,       \
+                       7)                                      \
+
+
+#define MNFCHI_ESTR(e)                         \
+((e) == (int)MNFCGI_REQUEST_COMPLETED ?        \
+    "MNFCGI_REQUEST_COMPLETED" :               \
+ (e) == (int)MNFCGI_IO_ERROR ?                 \
+    "MNFCGI_IO_ERROR" :                        \
+ (e) == (int)MNFCGI_PAYLOAD_TOO_LARGE ?        \
+    "MNFCGI_PAYLOAD_TOO_LARGE" :               \
+ (e) == (int)MNFCGI_USER_ERROR_BEGIN_REQUEST ? \
+    "MNFCGI_USER_ERROR_BEGIN_REQUEST" :        \
+ (e) == (int)MNFCGI_USER_ERROR_PARAMS ?        \
+    "MNFCGI_USER_ERROR_PARAMS" :               \
+ (e) == (int)MNFCGI_USER_ERROR_STDIN ?         \
+    "MNFCGI_USER_ERROR_STDIN" :                \
+ (e) == (int)MNFCGI_REQUEST_STATE ?            \
+    "MNFCGI_REQUEST_STATE" :                   \
+ "<unknown>"                                   \
+)                                              \
 
 
 #define MNFCGI_MAX_PAYLOAD (0x8000)
@@ -142,6 +191,24 @@ int mnfcgi_finalize_request(mnfcgi_request_t *);
 void mnfcgi_request_fill_info(mnfcgi_request_t *);
 mnbytes_t *mnfcgi_request_get_param(mnfcgi_request_t *, mnbytes_t *);
 mnbytes_t *mnfcgi_request_get_query_term(mnfcgi_request_t *, mnbytes_t *);
+
+
+#define MNFCGI_GET_QTN_ENULL                                   \
+    MNDIAG_PUBLIC_CODE(MNDIAG_LIBRARY_MNFCGI,                  \
+                       MNDIAG_CLASS_MNFCGI_MNFCGI_ERROR,       \
+                       8)                                      \
+
+
+#define MNFCGI_GET_QTN_EINVAL                                  \
+    MNDIAG_PUBLIC_CODE(MNDIAG_LIBRARY_MNFCGI,                  \
+                       MNDIAG_CLASS_MNFCGI_MNFCGI_ERROR,       \
+                       9)                                      \
+
+
+int mnfcgi_request_get_query_term_num(mnfcgi_request_t *,
+                                      mnbytes_t *,
+                                      int,
+                                      intmax_t *);
 mnbytes_t *mnfcgi_request_get_cookie(mnfcgi_request_t *, mnbytes_t *);
 
 #define MNFCGI_FADD_IFNOEXISTS  (0x01)

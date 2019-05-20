@@ -1,9 +1,10 @@
+#include <errno.h>
+#include <inttypes.h> /* strtoimax */
+#include <limits.h>
 #include <stdbool.h>
 #include <stdlib.h>
-#include <limits.h>
-#include <inttypes.h> /* strtoimax */
-#include <unistd.h>
 #include <sys/socket.h>
+#include <unistd.h>
 
 #include <mrkcommon/bytestream.h>
 #include <mrkcommon/hash.h>
@@ -270,6 +271,31 @@ mnfcgi_request_get_query_term(mnfcgi_request_t *req,
         res = hit->value;
     }
 
+    return res;
+}
+
+
+int
+mnfcgi_get_queyry_term_num(mnfcgi_request_t *req,
+                           mnbytes_t *name,
+                           int radix,
+                           intmax_t *rv)
+{
+    int res = 0;
+    mnbytes_t *v;
+
+    v = mnfcgi_request_get_query_term(req, name);
+    if (bytes_is_null_or_empty(v)) {
+        res = MNFCGI_GET_QTN_ENULL;
+        goto end;
+    }
+
+    *rv = strtoimax(BCDATA(v), NULL, radix);
+    if (*rv == 0 && errno == EINVAL) {
+        res = MNFCGI_GET_QTN_EINVAL;
+    }
+
+end:
     return res;
 }
 

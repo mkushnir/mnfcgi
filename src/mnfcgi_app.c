@@ -112,7 +112,7 @@ end:
     return;
 
 err:
-    if (res == MNFCGI_REQUEST_STATE) {
+    if (res == (int)MNFCGI_REQUEST_STATE) {
         CTRACE("MNFCGI_REQUEST_STATE violation");
 
     } else {
@@ -157,7 +157,7 @@ end:
     return;
 
 err:
-    if (res == MNFCGI_REQUEST_STATE) {
+    if (res == (int)MNFCGI_REQUEST_STATE) {
         CTRACE("MNFCGI_REQUEST_STATE violation");
 
     } else {
