@@ -276,10 +276,10 @@ mnfcgi_request_get_query_term(mnfcgi_request_t *req,
 
 
 int
-mnfcgi_get_queyry_term_num(mnfcgi_request_t *req,
-                           mnbytes_t *name,
-                           int radix,
-                           intmax_t *rv)
+mnfcgi_request_get_query_term_num(mnfcgi_request_t *req,
+                                   mnbytes_t *name,
+                                   int radix,
+                                   intmax_t *rv)
 {
     int res = 0;
     mnbytes_t *v;
