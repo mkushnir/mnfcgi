@@ -15,6 +15,7 @@
 #include <mrkcommon/bytes.h>
 #include <mrkcommon/hash.h>
 #include <mrkcommon/bytestream.h>
+#include <mrkcommon/util.h>
 
 #include <mnhttp.h>
 
@@ -205,10 +206,28 @@ mnbytes_t *mnfcgi_request_get_query_term(mnfcgi_request_t *, mnbytes_t *);
                        9)                                      \
 
 
-int mnfcgi_request_get_query_term_num(mnfcgi_request_t *,
-                                      mnbytes_t *,
-                                      int,
-                                      intmax_t *);
+int mnfcgi_request_get_query_term_double(mnfcgi_request_t *,
+                                         mnbytes_t *,
+                                         int,
+                                         double *);
+
+int mnfcgi_request_get_query_term_intmax(mnfcgi_request_t *,
+                                         mnbytes_t *,
+                                         int,
+                                         intmax_t *);
+
+#if __STDC_VERSION__ >= 201112 && defined(MRKCOMMON_GENERIC_SUPPORT)
+#define mnfcgi_request_get_query_term_num(req, name, radix, rv)\
+_Generic(rv,                                                   \
+         intmax_t *: mnfcgi_request_get_query_term_intmax,     \
+         double *: mnfcgi_request_get_query_term_double)(      \
+             (req), (name), (radix), (rv))                     \
+
+#else
+#define mnfcgi_request_get_query_term_num mnfcgi_request_get_query_term_double
+#endif
+
+
 mnbytes_t *mnfcgi_request_get_cookie(mnfcgi_request_t *, mnbytes_t *);
 
 #define MNFCGI_FADD_IFNOEXISTS  (0x01)

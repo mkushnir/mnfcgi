@@ -276,10 +276,10 @@ mnfcgi_request_get_query_term(mnfcgi_request_t *req,
 
 
 int
-mnfcgi_request_get_query_term_num(mnfcgi_request_t *req,
-                                   mnbytes_t *name,
-                                   int radix,
-                                   intmax_t *rv)
+mnfcgi_request_get_query_term_intmax(mnfcgi_request_t *req,
+                                     mnbytes_t *name,
+                                     int radix,
+                                     intmax_t *rv)
 {
     int res = 0;
     mnbytes_t *v;
@@ -292,6 +292,31 @@ mnfcgi_request_get_query_term_num(mnfcgi_request_t *req,
 
     *rv = strtoimax(BCDATA(v), NULL, radix);
     if (*rv == 0 && errno == EINVAL) {
+        res = MNFCGI_GET_QTN_EINVAL;
+    }
+
+end:
+    return res;
+}
+
+
+int
+mnfcgi_request_get_query_term_double(mnfcgi_request_t *req,
+                                     mnbytes_t *name,
+                                     UNUSED int radix,
+                                     double *rv)
+{
+    int res = 0;
+    mnbytes_t *v;
+
+    v = mnfcgi_request_get_query_term(req, name);
+    if (bytes_is_null_or_empty(v)) {
+        res = MNFCGI_GET_QTN_ENULL;
+        goto end;
+    }
+
+    *rv = strtod(BCDATA(v), NULL);
+    if (errno == ERANGE) {
         res = MNFCGI_GET_QTN_EINVAL;
     }
 
