@@ -208,16 +208,15 @@ testmy_stdin(mnfcgi_record_t *rec, UNUSED mnbytestream_t *bs, void *udata)
     if (rec->header.rsz == 0) {
         int i;
         int res;
-        BYTES_ALLOCA(_apiv1, "/api/v1");
-        BYTES_ALLOCA(_request_uri, "REQUEST_URI");
         mnbytes_t *request_uri;
 
         //MRKTHR_SPAWN("fin", myfinalize, req);
         //mrkthr_sleep(5000);
 
-        request_uri = mnfcgi_request_get_param(req, _request_uri);
+        request_uri = mnfcgi_request_get_param(req, BYTES_REF("REQUEST_URI"));
         res = 0;
-        if (request_uri != NULL && bytes_startswith(request_uri, _apiv1)) {
+        if (request_uri != NULL &&
+                bytes_startswith(request_uri, BYTES_REF("/api/v1"))) {
             res = mnfcgi_render_stdout(req, mystdout_local_redirect, NULL);
         } else {
             res = mnfcgi_render_stdout(req, mystdout, NULL);

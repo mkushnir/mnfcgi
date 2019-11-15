@@ -45,7 +45,6 @@ check_authorization(mnbytes_t *response_type,
                     mnbytes_t **code) {
     int res = 0;
     mnbytes_t *a = NULL;
-    BYTES_ALLOCA(_basic, "Basic ");
 
     assert(response_type != NULL);
     assert(client_id != NULL);
@@ -65,7 +64,7 @@ check_authorization(mnbytes_t *response_type,
     }
     res |= CHECK_AUTHORIZATION_REDIRECT_URI_OK;
 
-    if (bytes_startswith(authorization, _basic)) {
+    if (bytes_startswith(authorization, BYTES_REF("Basic "))) {
         a = bytes_new(BSZ(authorization) - 6);
         memcpy(BDATA(a), BDATA(authorization) + 6, BSZ(a));
 
