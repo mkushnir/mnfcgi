@@ -236,7 +236,7 @@ mnfcgi_request_item_fini(UNUSED void *key, mnfcgi_request_t *req)
 
 mnbytes_t *
 mnfcgi_request_get_param(mnfcgi_request_t *req,
-                         mnbytes_t *name)
+                         const mnbytes_t *name)
 {
     mnbytes_t *res;
     mnfcgi_header_t *h;

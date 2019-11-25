@@ -189,11 +189,12 @@ mrkpq_cache_exec(mrkpq_cache_t *cache,
 {
     int res;
     mnhash_item_t *hit;
-    mrkpq_cache_entry_t *ce, probe;
+    mrkpq_cache_entry_t *ce;
 
     res = 0;
     probe.stmt = stmt;
-    if ((hit = hash_get_item(&cache->prepared, &probe)) == NULL) {
+    if ((hit = hash_get_item(&cache->prepared,
+                             &(mrkpq_cache_entry_t){.stmt = stmt})) == NULL) {
         ce = mrkpq_cache_entry_new();
         ce->stmt = stmt;
         BYTES_INCREF(ce->stmt);
@@ -235,7 +236,8 @@ end:
     return res;
 
 err:
-    if ((hit = hash_get_item(&cache->prepared, &probe)) == NULL) {
+    if ((hit = hash_get_item(&cache->prepared,
+                             &(mrkpq_cache_entry_t){.stmt = stmt})) == NULL) {
         FAIL("mrkpq_cache_exec");
     }
     hash_delete_pair(&cache->prepared, hit);
