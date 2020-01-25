@@ -11,10 +11,10 @@
 #   include <malloc.h>
 #endif
 
-#include <mrkcommon/dumpm.h>
-#include <mrkcommon/util.h>
+#include <mncommon/dumpm.h>
+#include <mncommon/util.h>
 
-#include <mrkthr.h>
+#include <mnthr.h>
 
 // TODO: convert to use public interface <mnfcgi.h>
 #include <mnfcgi_app.h>
@@ -123,7 +123,7 @@ UNUSED
 static void
 barinfo(UNUSED int sig)
 {
-    mrkthr_dump_all_ctxes();
+    mnthr_dump_all_ctxes();
 }
 
 
@@ -132,10 +132,10 @@ sigshutdown(UNUSED int argc, UNUSED void **argv)
 {
     if (!shutting_down) {
         if (!sigshutdown_sent) {
-            mrkthr_shutdown();
+            mnthr_shutdown();
 
             /*
-             * At this point mrkthr_loop() should get ready to terminate in
+             * At this point mnthr_loop() should get ready to terminate in
              * main(), and let it exit naturally.
              */
         } else {
@@ -151,7 +151,7 @@ sigshutdown(UNUSED int argc, UNUSED void **argv)
 static void
 barterm(UNUSED int sig)
 {
-    (void)MRKTHR_SPAWN_SIG("sigshutdown", sigshutdown);
+    (void)MNTHR_SPAWN_SIG("sigshutdown", sigshutdown);
 }
 
 
@@ -208,17 +208,17 @@ static int
 run0(UNUSED int argc, UNUSED void **argv)
 {
     while (true) {
-        UNUSED mrkthr_ctx_t *thread;
+        UNUSED mnthr_ctx_t *thread;
         int res;
 
         res = run1(0, NULL);
 
-        //thread = MRKTHR_SPAWN("run1", run1);
-        //if ((res = mrkthr_join(thread)) != 0) {
+        //thread = MNTHR_SPAWN("run1", run1);
+        //if ((res = mnthr_join(thread)) != 0) {
         //    break;
         //}
 
-        if ((res = mrkthr_sleep(1000)) != 0) {
+        if ((res = mnthr_sleep(1000)) != 0) {
             break;
         }
     }
@@ -373,10 +373,10 @@ main(int argc, char **argv)
         //daemon_ize();
     }
 
-    (void)mrkthr_init();
-    (void)MRKTHR_SPAWN("run0", run0, argc, argv);
-    (void)mrkthr_loop();
-    (void)mrkthr_fini();
+    (void)mnthr_init();
+    (void)MNTHR_SPAWN("run0", run0, argc, argv);
+    (void)mnthr_loop();
+    (void)mnthr_fini();
 
 end:
 

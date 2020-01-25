@@ -1,8 +1,8 @@
-#include <mrkcommon/dumpm.h>
-#include <mrkcommon/util.h>
+#include <mncommon/dumpm.h>
+#include <mncommon/util.h>
 
-#include <mrkthr.h>
-#include <mrkpq.h>
+#include <mnthr.h>
+#include <mnpq.h>
 
 // TODO: convert to use public interface <mnfcgi.h>
 #include <mnfcgi_app_private.h>
@@ -54,7 +54,7 @@ static mnfcgi_app_endpoint_table_t client_table = {
 /*
  * database (postgres)
  */
-mrkpq_cache_t cache;
+mnpq_cache_t cache;
 
 
 int
@@ -70,8 +70,8 @@ testoauth_begin_request(UNUSED mnfcgi_request_t *req,
 //myshutdown(UNUSED int argc, UNUSED void **argv)
 //{
 //
-//    mrkthr_sleep(1000);
-//    mrkthr_shutdown();
+//    mnthr_sleep(1000);
+//    mnthr_shutdown();
 //    return 0;
 //}
 
@@ -102,7 +102,7 @@ testoauth_stdin_end(mnfcgi_request_t *req, void *udata)
     (void)mnfcgi_request_field_addf(req, 0,
             &_server, "%s/%s", PACKAGE, VERSION);
     (void)mnfcgi_request_field_addt(req, 0,
-            &_date, MRKTHR_GET_NOW_SEC() - 3600);
+            &_date, MNTHR_GET_NOW_SEC() - 3600);
     (void)mnfcgi_request_field_addb(req, 0,
             &_cache_control, &_private);
     (void)mnfcgi_request_field_addb(req, 0,
@@ -115,7 +115,7 @@ testoauth_stdin_end(mnfcgi_request_t *req, void *udata)
         mnfcgi_app_error(req, 501, &_not_implemented);
     }
 
-    if (MRKUNLIKELY(mnfcgi_finalize_request(req) != 0)) {
+    if (MNUNLIKELY(mnfcgi_finalize_request(req) != 0)) {
     }
     /*
      * at this point no operation on req is possible any more.
@@ -144,19 +144,19 @@ testoauth_app_init(mnfcgi_app_t *app)
     };
 
     for (i = 0; i < countof(endpoints); ++i) {
-        if (MRKUNLIKELY(mnfcgi_app_register_endpoint(app,
+        if (MNUNLIKELY(mnfcgi_app_register_endpoint(app,
                                                      endpoints[i])) != 0) {
             FAIL("testoauth_app_init");
         }
     }
 
-    return mrkpq_cache_init(&cache, "postgres://postgres@localhost/auth");
+    return mnpq_cache_init(&cache, "postgres://postgres@localhost/auth");
 }
 
 
 int
 testoauth_app_fini(UNUSED mnfcgi_app_t *app)
 {
-    mrkpq_cache_fini(&cache);
+    mnpq_cache_fini(&cache);
     return 0;
 }

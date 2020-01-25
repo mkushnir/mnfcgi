@@ -1,7 +1,7 @@
-#include <mrkcommon/dumpm.h>
-#include <mrkcommon/util.h>
+#include <mncommon/dumpm.h>
+#include <mncommon/util.h>
 
-#include <mrkthr.h>
+#include <mnthr.h>
 
 // TODO: convert to use public interface <mnfcgi.h>
 #include <mnfcgi_private.h>
@@ -41,10 +41,10 @@ mystdout(mnfcgi_record_t *rec, mnbytestream_t *bs, void *udata)
 
         mnfcgi_request_field_addt(req, 0,
                                   &_x_mn_date,
-                                  MRKTHR_GET_NOW_SEC() + 86400);
+                                  MNTHR_GET_NOW_SEC() + 86400);
         mnfcgi_request_field_addt(req, 0,
                                   &_date,
-                                  MRKTHR_GET_NOW_SEC() - 86400);
+                                  MNTHR_GET_NOW_SEC() - 86400);
         mnfcgi_request_field_addf(req, 0,
                                   &_server,
                                   "%s/%s", PACKAGE, VERSION);
@@ -169,7 +169,7 @@ mystdout(mnfcgi_record_t *rec, mnbytestream_t *bs, void *udata)
             "\t\t<p>qwe: %s (%ld)</p>\n",
             req->begin_request->header.rid,
             BDATASAFE(qwe),
-            MRKTHR_GET_NOW_SEC());
+            MNTHR_GET_NOW_SEC());
     } else {
         return mnfcgi_printf(bs,
                              "\t</body>\n"
@@ -189,7 +189,7 @@ myfinalize(UNUSED int argc, UNUSED void **argv)
     UNUSED int res;
 
     req = argv[0];
-    //mrkthr_sleep(3500);
+    //mnthr_sleep(3500);
 
     //CTRACE("FATAL %p", req);
 
@@ -210,8 +210,8 @@ testmy_stdin(mnfcgi_record_t *rec, UNUSED mnbytestream_t *bs, void *udata)
         int res;
         mnbytes_t *request_uri;
 
-        //MRKTHR_SPAWN("fin", myfinalize, req);
-        //mrkthr_sleep(5000);
+        //MNTHR_SPAWN("fin", myfinalize, req);
+        //mnthr_sleep(5000);
 
         request_uri = mnfcgi_request_get_param(req, BYTES_REF("REQUEST_URI"));
         res = 0;
@@ -221,7 +221,7 @@ testmy_stdin(mnfcgi_record_t *rec, UNUSED mnbytestream_t *bs, void *udata)
         } else {
             res = mnfcgi_render_stdout(req, mystdout, NULL);
             for (i = 0; i < 5; ++i) {
-                //mrkthr_sleep(5000);
+                //mnthr_sleep(5000);
                 res = mnfcgi_render_stdout(req,
                                            mystdout,
                                            (void *)(intptr_t)(i + 1));

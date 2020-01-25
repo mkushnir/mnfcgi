@@ -1,7 +1,7 @@
-#include <mrkcommon/bytes.h>
-#include <mrkcommon/hash.h>
-#include <mrkcommon/dumpm.h>
-#include <mrkcommon/util.h>
+#include <mncommon/bytes.h>
+#include <mncommon/hash.h>
+#include <mncommon/dumpm.h>
+#include <mncommon/util.h>
 
 #include "mnfcgi_private.h"
 

@@ -1,7 +1,7 @@
-#include <mrkcommon/dumpm.h>
-#include <mrkcommon/util.h>
+#include <mncommon/dumpm.h>
+#include <mncommon/util.h>
 
-#include <mrkthr.h>
+#include <mnthr.h>
 
 #include <mnfcgi_app_private.h>
 
@@ -11,7 +11,7 @@
 static mnbytes_t _found = BYTES_INITIALIZER("Found...");
 
 #if 0
-static mnbytes_t _ok = BYTES_INITIALIZER("MRK");
+static mnbytes_t _ok = BYTES_INITIALIZER("MN");
 static mnbytes_t _internal_server_error =
     BYTES_INITIALIZER("Internal Server Error");
 #endif

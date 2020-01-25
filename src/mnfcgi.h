@@ -12,10 +12,10 @@
 
 #include <mndiag.h>
 
-#include <mrkcommon/bytes.h>
-#include <mrkcommon/hash.h>
-#include <mrkcommon/bytestream.h>
-#include <mrkcommon/util.h>
+#include <mncommon/bytes.h>
+#include <mncommon/hash.h>
+#include <mncommon/bytestream.h>
+#include <mncommon/util.h>
 
 #include <mnhttp.h>
 
@@ -216,7 +216,7 @@ int mnfcgi_request_get_query_term_intmax(mnfcgi_request_t *,
                                          int,
                                          intmax_t *);
 
-#if __STDC_VERSION__ >= 201112 && defined(MRKCOMMON_GENERIC_SUPPORT)
+#if __STDC_VERSION__ >= 201112 && defined(MNCOMMON_GENERIC_SUPPORT)
 #define mnfcgi_request_get_query_term_num(req, name, radix, rv)\
 _Generic(rv,                                                   \
          intmax_t *: mnfcgi_request_get_query_term_intmax,     \

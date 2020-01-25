@@ -12,7 +12,7 @@ AM_MAKEFLAGS = -s
 noinst_HEADERS = unittest.h testmy.h testoauth.h
 
 noinst_PROGRAMS=gendata testfoo
-if MRKPQ
+if MNPQ
 noinst_PROGRAMS+= testbar
 endif
 
@@ -32,16 +32,16 @@ endif
 nodist_gendata_SOURCES = diag.c
 gendata_SOURCES = gendata.c
 gendata_CFLAGS = $(DEBUG_FLAGS) -Wall -Wextra -Werror -std=c99 @_GNU_SOURCE_MACRO@ -I$(top_srcdir)/test -I$(top_srcdir)/src -I$(top_srcdir) -I$(includedir)
-gendata_LDFLAGS = -L$(libdir) -lmrkcommon -lmndiag
+gendata_LDFLAGS = -L$(libdir) -lmncommon -lmndiag
 #gendata_LDFLAGS = 
 
 nodist_testfoo_SOURCES = diag.c
 testfoo_SOURCES = ../src/mnfcgi_app.c testfoo.c
 testfoo_CFLAGS = $(DEBUG_FLAGS) -DUNITTEST -Wall -Wextra -Werror -std=c99 @_GNU_SOURCE_MACRO@ -I$(top_srcdir)/test -I$(top_srcdir)/src -I$(top_srcdir) -I$(includedir)
-testfoo_LDFLAGS = -L$(top_srcdir)/src/.libs -lmnfcgi -L$(libdir) -lmrkapp -lmrkthr -lmrkcommon -lmndiag
+testfoo_LDFLAGS = -L$(top_srcdir)/src/.libs -lmnfcgi -L$(libdir) -lmnapp -lmnthr -lmncommon -lmndiag
 #testfoo_LDFLAGS = -L$(top_srcdir)/src/.libs -lmnfcgi
 
-if MRKPQ
+if MNPQ
 nodist_testbar_SOURCES = diag.c
 testbar_SOURCES = testbar.c \
 		  testoauth.c \
@@ -53,7 +53,7 @@ testbar_SOURCES = testbar.c \
 		  testmy.c
 
 testbar_CFLAGS = $(DEBUG_FLAGS) -Wall -Wextra -Werror -std=c99 @_GNU_SOURCE_MACRO@ -I$(top_srcdir)/test -I$(top_srcdir)/src -I$(top_srcdir) -I$(includedir)
-testbar_LDFLAGS = -L$(top_srcdir)/src/.libs -lmnfcgi -L$(libdir) -lmrkpq -lmrkthr -lmrkcommon -lmndiag
+testbar_LDFLAGS = -L$(top_srcdir)/src/.libs -lmnfcgi -L$(libdir) -lmnpq -lmnthr -lmncommon -lmndiag
 #testbar_LDFLAGS = -L$(top_srcdir)/src/.libs -lmnfcgi
 endif
 

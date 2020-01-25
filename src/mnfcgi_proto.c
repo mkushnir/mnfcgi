@@ -6,10 +6,10 @@
 #include <sys/socket.h>
 #include <unistd.h>
 
-#include <mrkcommon/bytestream.h>
-#include <mrkcommon/hash.h>
-#include <mrkcommon/util.h>
-#include <mrkthr.h>
+#include <mncommon/bytestream.h>
+#include <mncommon/hash.h>
+#include <mncommon/util.h>
+#include <mnthr.h>
 
 #include "mnfcgi_private.h"
 
@@ -140,7 +140,7 @@ mnfcgi_request_new(void)
 {
     mnfcgi_request_t *req;
 
-    if (MRKUNLIKELY((req = malloc(sizeof(mnfcgi_request_t))) == NULL)) {
+    if (MNUNLIKELY((req = malloc(sizeof(mnfcgi_request_t))) == NULL)) {
         FAIL("malloc");
     }
     mnfcgi_request_init(req);
@@ -206,7 +206,7 @@ mnfcgi_request_fini(mnfcgi_request_t *req)
 
     if (req->ctx->config->end_request_render != NULL) {
         ssize_t nwritten;
-        if (MRKUNLIKELY((nwritten = req->ctx->config->end_request_render(
+        if (MNUNLIKELY((nwritten = req->ctx->config->end_request_render(
                             NULL, &req->ctx->out, req)) < 0)) {
         }
     }
@@ -346,7 +346,7 @@ mnfcgi_request_fill_info(mnfcgi_request_t *req)
 {
     mnbytes_t *value;
 
-    if (MRKLIKELY(
+    if (MNLIKELY(
         (value = mnfcgi_request_get_param(req,
                                           &_param_request_scheme)) != NULL)) {
         if (bytes_cmp(value, &_http) == 0) {
@@ -356,7 +356,7 @@ mnfcgi_request_fill_info(mnfcgi_request_t *req)
         }
     }
 
-    if (MRKLIKELY(
+    if (MNLIKELY(
         (value = mnfcgi_request_get_param(req,
                                           &_param_request_method)) != NULL)) {
         if (bytes_cmp(value, &_get) == 0) {
@@ -378,37 +378,37 @@ mnfcgi_request_fill_info(mnfcgi_request_t *req)
         }
     }
 
-    if (MRKLIKELY(
+    if (MNLIKELY(
         (value = mnfcgi_request_get_param(req,
                                           &_param_script_name)) != NULL)) {
         req->info.script_name = value;
         BYTES_INCREF(value);
     }
 
-    if (MRKLIKELY(
+    if (MNLIKELY(
         (value = mnfcgi_request_get_param(req,
                                           &_param_path_info)) != NULL)) {
         req->info.path_info = value;
         BYTES_INCREF(value);
     }
 
-    if (MRKLIKELY(
+    if (MNLIKELY(
         (value = mnfcgi_request_get_param(req,
                                           &_param_query_string)) != NULL)) {
-        (void)mrkhttp_parse_qterms(value, '=', '&', &req->info.query_terms);
+        (void)mnhttp_parse_qterms(value, '=', '&', &req->info.query_terms);
     }
 
     if ((value = mnfcgi_request_get_param(req, &_param_http_cookie)) != NULL) {
-        (void)mrkhttp_parse_kvpbd(value, '=', '&', &req->info.cookie);
+        (void)mnhttp_parse_kvpbd(value, '=', '&', &req->info.cookie);
     }
 
-    if (MRKLIKELY(
+    if (MNLIKELY(
         (value = mnfcgi_request_get_param(req,
                                           &_param_content_length)) != NULL)) {
         req->info.content_length = strtoimax(BCDATA(value), NULL, 10);
     }
 
-    if (MRKLIKELY(
+    if (MNLIKELY(
         (value = mnfcgi_request_get_param(req,
                                           &_param_content_type)) != NULL)) {
         req->info.content_type = value;
@@ -434,7 +434,7 @@ mnfcgi_request_field_addf(mnfcgi_request_t *req,
              (flags & MNFCGI_FADD_OVERRIDE)));
     assert(name != NULL);
 
-    if (MRKUNLIKELY(req->state > MNFCGI_REQUEST_STATE_HEADERS_ALLOWED)) {
+    if (MNUNLIKELY(req->state > MNFCGI_REQUEST_STATE_HEADERS_ALLOWED)) {
         return MNFCGI_REQUEST_STATE;
     }
     res = 0;
@@ -487,7 +487,7 @@ mnfcgi_request_field_addb(mnfcgi_request_t *req,
     assert(!((flags & MNFCGI_FADD_IFNOEXISTS) &&
              (flags & MNFCGI_FADD_OVERRIDE)));
 
-    if (MRKUNLIKELY(req->state > MNFCGI_REQUEST_STATE_HEADERS_ALLOWED)) {
+    if (MNUNLIKELY(req->state > MNFCGI_REQUEST_STATE_HEADERS_ALLOWED)) {
         return MNFCGI_REQUEST_STATE;
     }
     res = 0;
@@ -541,7 +541,7 @@ mnfcgi_request_field_addt(mnfcgi_request_t *req,
     assert(!((flags & MNFCGI_FADD_IFNOEXISTS) &&
              (flags & MNFCGI_FADD_OVERRIDE)));
 
-    if (MRKUNLIKELY(req->state > MNFCGI_REQUEST_STATE_HEADERS_ALLOWED)) {
+    if (MNUNLIKELY(req->state > MNFCGI_REQUEST_STATE_HEADERS_ALLOWED)) {
         return MNFCGI_REQUEST_STATE;
     }
     res = 0;
@@ -685,7 +685,7 @@ mnfcgi_request_headers_end(mnfcgi_request_t *req)
     int res;
 
     res = 0;
-    if (MRKUNLIKELY(req->state > MNFCGI_REQUEST_STATE_HEADERS_ALLOWED)) {
+    if (MNUNLIKELY(req->state > MNFCGI_REQUEST_STATE_HEADERS_ALLOWED)) {
         return MNFCGI_REQUEST_STATE;
     }
 
@@ -774,11 +774,11 @@ mnfcgi_ctx_init(mnfcgi_ctx_t *ctx,
 
     bytestream_init(&ctx->in,
                     MNFCGI_DEFAULT_BYTESTREAM_BUFSZ);
-    ctx->in.read_more = mrkthr_bytestream_read_more;
+    ctx->in.read_more = mnthr_bytestream_read_more;
 
     bytestream_init(&ctx->out,
                     MNFCGI_DEFAULT_BYTESTREAM_BUFSZ);
-    ctx->out.write = mrkthr_bytestream_write;
+    ctx->out.write = mnthr_bytestream_write;
 
     hash_init(&ctx->requests,
               MNFCGI_CTX_REQUESTS_HASHLEN,
@@ -806,7 +806,7 @@ void
 mnfcgi_ctx_send_interrupt(mnfcgi_request_t *req)
 {
     if (req->ctx->thread != NULL) {
-        mrkthr_set_interrupt(req->ctx->thread);
+        mnthr_set_interrupt(req->ctx->thread);
     }
 }
 
@@ -824,7 +824,7 @@ mnfcgi_render_end_request(mnfcgi_ctx_t *ctx,
 
     res = 0;
 
-    if (MRKUNLIKELY(
+    if (MNUNLIKELY(
             (response =
              mnfcgi_record_new(MNFCGI_END_REQUEST)) == NULL)) {
         res = MNFCGI_RENDER_END_REQUEST + 1;
@@ -835,7 +835,7 @@ mnfcgi_render_end_request(mnfcgi_ctx_t *ctx,
     response->end_request.proto_status = proto_status;
     response->end_request.app_status = app_status;
 
-    if (MRKUNLIKELY((res = mnfcgi_render(&ctx->out, response, NULL)) != 0)) {
+    if (MNUNLIKELY((res = mnfcgi_render(&ctx->out, response, NULL)) != 0)) {
         goto end;
     }
 
@@ -857,7 +857,7 @@ mnfcgi_render_empty_stdout(mnfcgi_ctx_t *ctx,
     }
 
     res = 0;
-    if (MRKUNLIKELY(
+    if (MNUNLIKELY(
             (response =
              mnfcgi_record_new(MNFCGI_STDOUT)) == NULL)) {
         res = MNFCGI_RENDER_EMPTY_STDOUT + 1;
@@ -867,7 +867,7 @@ mnfcgi_render_empty_stdout(mnfcgi_ctx_t *ctx,
     //CTRACE("rid=%hd", req->begin_request->header.rid);
     response->header.rid = req->begin_request->header.rid;
 
-    if (MRKUNLIKELY((res = mnfcgi_render(&ctx->out, response, NULL)) != 0)) {
+    if (MNUNLIKELY((res = mnfcgi_render(&ctx->out, response, NULL)) != 0)) {
         goto end;
     }
 
@@ -903,7 +903,7 @@ mnfcgi_abort_request(mnfcgi_request_t *req, int app_status)
                 app_status) != 0) {
         }
 
-        if (MRKUNLIKELY(
+        if (MNUNLIKELY(
                 (res = bytestream_produce_data(
                     &req->ctx->out,
                     req->ctx->fp)) != 0)) {
@@ -935,7 +935,7 @@ mnfcgi_render_stdout(mnfcgi_request_t *req,
     }
 
     res = 0;
-    if (MRKUNLIKELY(
+    if (MNUNLIKELY(
             (rec =
              mnfcgi_record_new(MNFCGI_STDOUT)) == NULL)) {
         res = MNFCGI_RENDER_STDOUT + 1;
@@ -947,7 +947,7 @@ mnfcgi_render_stdout(mnfcgi_request_t *req,
     rec->_stdout.render = render;
     rec->_stdout.udata = udata;
 
-    if (MRKUNLIKELY((res = mnfcgi_render(&req->ctx->out,
+    if (MNUNLIKELY((res = mnfcgi_render(&req->ctx->out,
                                   rec,
                                   req)) != 0)) {
         goto end;
@@ -972,7 +972,7 @@ _mnfcgi_handle_socket(mnfcgi_ctx_t *ctx)
         mnhash_iter_t it;
         mnfcgi_request_t *req;
 
-        if (MRKUNLIKELY((rec = mnfcgi_parse(&ctx->in, ctx->fp)) == NULL)) {
+        if (MNUNLIKELY((rec = mnfcgi_parse(&ctx->in, ctx->fp)) == NULL)) {
             goto err;
         }
 
@@ -987,20 +987,20 @@ _mnfcgi_handle_socket(mnfcgi_ctx_t *ctx)
 
                 if (tmp->role != MNFCGI_RESPONDER) {
                     CTRACE("role not supported %hd", tmp->role);
-                    if (MRKUNLIKELY(mnfcgi_render_end_request(ctx,
+                    if (MNUNLIKELY(mnfcgi_render_end_request(ctx,
                                                   rec,
                                                   MNFCGI_UNKNOWN_ROLE,
                                                   0) != 0)) {
                         goto err;
                     }
-                    if (MRKUNLIKELY(
+                    if (MNUNLIKELY(
                         bytestream_produce_data(&ctx->out, ctx->fp) != 0)) {
                         goto err;
                     }
                     mnfcgi_record_destroy(&rec);
 
                 } else {
-                    if (MRKLIKELY((hit = hash_get_item(&ctx->requests,
+                    if (MNLIKELY((hit = hash_get_item(&ctx->requests,
                             (void *)(uintptr_t)rec->header.rid)) == NULL)) {
                         req = mnfcgi_request_new();
                         req->ctx = ctx;
@@ -1009,7 +1009,7 @@ _mnfcgi_handle_socket(mnfcgi_ctx_t *ctx)
                         if (ctx->config->begin_request_parse != NULL) {
                             ssize_t nparsed;
 
-                            if (MRKUNLIKELY(
+                            if (MNUNLIKELY(
                                     (nparsed =
                                      ctx->config->begin_request_parse(
                                         rec, &ctx->in, req)) < 0)) {
@@ -1020,7 +1020,7 @@ _mnfcgi_handle_socket(mnfcgi_ctx_t *ctx)
 
                                 mnfcgi_request_destroy(&req);
 
-                                if (MRKUNLIKELY(
+                                if (MNUNLIKELY(
                                     bytestream_produce_data(&ctx->out,
                                                             ctx->fp) != 0)) {
                                     goto err;
@@ -1049,7 +1049,7 @@ _mnfcgi_handle_socket(mnfcgi_ctx_t *ctx)
                                                       0) != 0) {
                             goto err;
                         }
-                        if (MRKUNLIKELY(
+                        if (MNUNLIKELY(
                             bytestream_produce_data(&ctx->out, ctx->fp) != 0)) {
                             goto err;
                         }
@@ -1061,7 +1061,7 @@ _mnfcgi_handle_socket(mnfcgi_ctx_t *ctx)
 
         case MNFCGI_ABORT_REQUEST:
             {
-                if (MRKUNLIKELY((hit = hash_get_item(&ctx->requests,
+                if (MNUNLIKELY((hit = hash_get_item(&ctx->requests,
                         (void *)(uintptr_t)rec->header.rid)) == NULL)) {
                     CTRACE("no such request %hd", rec->header.rid);
                     if (mnfcgi_render_end_request(ctx,
@@ -1078,7 +1078,7 @@ _mnfcgi_handle_socket(mnfcgi_ctx_t *ctx)
                     hash_delete_pair(&ctx->requests, hit);
                 }
 
-                if (MRKUNLIKELY(
+                if (MNUNLIKELY(
                     bytestream_produce_data(&ctx->out,
                                             ctx->fp) != 0)) {
                     goto err;
@@ -1090,7 +1090,7 @@ _mnfcgi_handle_socket(mnfcgi_ctx_t *ctx)
 
         case MNFCGI_PARAMS:
             {
-                if (MRKUNLIKELY((hit = hash_get_item(&ctx->requests,
+                if (MNUNLIKELY((hit = hash_get_item(&ctx->requests,
                         (void *)(uintptr_t)rec->header.rid)) == NULL)) {
                     CTRACE("no such request %hd", rec->header.rid);
                     if (mnfcgi_render_end_request(ctx,
@@ -1099,7 +1099,7 @@ _mnfcgi_handle_socket(mnfcgi_ctx_t *ctx)
                                                   0) != 0) {
                         goto err;
                     }
-                    if (MRKUNLIKELY(
+                    if (MNUNLIKELY(
                         bytestream_produce_data(&ctx->out,
                                                 ctx->fp) != 0)) {
                         goto err;
@@ -1125,7 +1125,7 @@ _mnfcgi_handle_socket(mnfcgi_ctx_t *ctx)
 
                             hash_delete_pair(&ctx->requests, hit);
 
-                            if (MRKUNLIKELY(
+                            if (MNUNLIKELY(
                                 bytestream_produce_data(&ctx->out,
                                                         ctx->fp) != 0)) {
                                 goto err;
@@ -1150,7 +1150,7 @@ _mnfcgi_handle_socket(mnfcgi_ctx_t *ctx)
 
         case MNFCGI_STDIN:
             {
-                if (MRKUNLIKELY((hit = hash_get_item(&ctx->requests,
+                if (MNUNLIKELY((hit = hash_get_item(&ctx->requests,
                         (void *)(uintptr_t)
                         rec->header.rid)) == NULL)) {
                     CTRACE("no such request %hd", rec->header.rid);
@@ -1160,7 +1160,7 @@ _mnfcgi_handle_socket(mnfcgi_ctx_t *ctx)
                                                   0) != 0) {
                         goto err;
                     }
-                    if (MRKUNLIKELY(
+                    if (MNUNLIKELY(
                         bytestream_produce_data(&ctx->out,
                                                 ctx->fp) != 0)) {
                         goto err;
@@ -1202,7 +1202,7 @@ _mnfcgi_handle_socket(mnfcgi_ctx_t *ctx)
 
         case MNFCGI_DATA:
             {
-                if (MRKUNLIKELY((hit = hash_get_item(&ctx->requests,
+                if (MNUNLIKELY((hit = hash_get_item(&ctx->requests,
                         (void *)(uintptr_t)
                         rec->header.rid)) == NULL)) {
                     CTRACE("no such request %hd", rec->header.rid);
@@ -1212,7 +1212,7 @@ _mnfcgi_handle_socket(mnfcgi_ctx_t *ctx)
                                                   0) != 0) {
                         goto err;
                     }
-                    if (MRKUNLIKELY(
+                    if (MNUNLIKELY(
                         bytestream_produce_data(&ctx->out,
                                                 ctx->fp) != 0)) {
                         goto err;
@@ -1276,7 +1276,7 @@ _mnfcgi_handle_socket(mnfcgi_ctx_t *ctx)
                     BYTES_INCREF(value);
                 }
                 rec->header.type = MNFCGI_GET_VALUES_RESULT;
-                if (MRKUNLIKELY(
+                if (MNUNLIKELY(
                         mnfcgi_render(&ctx->out, rec, NULL) != 0)) {
                     goto err;
                 }
@@ -1290,14 +1290,14 @@ _mnfcgi_handle_socket(mnfcgi_ctx_t *ctx)
             {
                 mnfcgi_record_t *response;
 
-                if (MRKUNLIKELY(
+                if (MNUNLIKELY(
                         (response =
                          mnfcgi_record_new(MNFCGI_UNKNOWN_TYPE)) == NULL)) {
                     goto err;
                 }
 
                 response->unknown_type.type = rec->header.type;
-                if (MRKUNLIKELY(mnfcgi_render(&ctx->out,
+                if (MNUNLIKELY(mnfcgi_render(&ctx->out,
                                               response,
                                               NULL) != 0)) {
                     mnfcgi_record_destroy(&response);
@@ -1305,7 +1305,7 @@ _mnfcgi_handle_socket(mnfcgi_ctx_t *ctx)
                 }
 
                 mnfcgi_record_destroy(&response);
-                if (MRKUNLIKELY(
+                if (MNUNLIKELY(
                         bytestream_produce_data(&ctx->out, ctx->fp) != 0)) {
                     goto err;
                 }
@@ -1345,7 +1345,7 @@ mnfcgi_flush_out(mnfcgi_request_t *req)
 
     res = 0;
     if (!req->flags.complete) {
-        if (MRKUNLIKELY(
+        if (MNUNLIKELY(
                 (res = bytestream_produce_data(
                     &req->ctx->out,
                     req->ctx->fp)) != 0)) {
@@ -1369,7 +1369,7 @@ mnfcgi_finalize_request(mnfcgi_request_t *req)
             mnfcgi_record_t *rec;
 
             rec = (mnfcgi_record_t *)h;
-            if (MRKUNLIKELY(mnfcgi_render(&req->ctx->out, rec, req) != 0)) {
+            if (MNUNLIKELY(mnfcgi_render(&req->ctx->out, rec, req) != 0)) {
             }
             mnfcgi_record_destroy(&rec);
         }
@@ -1385,7 +1385,7 @@ mnfcgi_finalize_request(mnfcgi_request_t *req)
                 0) != 0) {
         }
 
-        if (MRKUNLIKELY(
+        if (MNUNLIKELY(
                 (res = bytestream_produce_data(
                     &req->ctx->out,
                     req->ctx->fp)) != 0)) {
@@ -1451,7 +1451,7 @@ mnfcgi_handle_socket(UNUSED int argc, void **argv)
     ++config->stats.nthreads;
     fd = (int)(intptr_t)argv[1];
     mnfcgi_ctx_init(&ctx, config, fd);
-    ctx.thread = mrkthr_me();
+    ctx.thread = mnthr_me();
     _mnfcgi_handle_socket(&ctx);
     ctx.thread = NULL;
     --config->stats.nthreads;
@@ -1466,7 +1466,7 @@ mnfcgi_serve(mnfcgi_config_t *config)
     int res;
     res = 0;
 
-    if ((config->fd = mrkthr_socket_bind(BCDATA(config->host),
+    if ((config->fd = mnthr_socket_bind(BCDATA(config->host),
                                   BCDATA(config->port),
                                   PF_INET)) == -1) {
         res = MNFCGI_SERVE + 1;
@@ -1483,12 +1483,12 @@ mnfcgi_serve(mnfcgi_config_t *config)
     }
 
     while (true) {
-        mrkthr_socket_t *sockets;
+        mnthr_socket_t *sockets;
         off_t sz, i;
 
         sockets = NULL;
         sz = 0;
-        if ((res = mrkthr_accept_all2(config->fd, &sockets, &sz)) != 0) {
+        if ((res = mnthr_accept_all2(config->fd, &sockets, &sz)) != 0) {
             res = MNFCGI_SERVE + 3;
             if (sockets != NULL) {
                 free(sockets);
@@ -1497,12 +1497,12 @@ mnfcgi_serve(mnfcgi_config_t *config)
         }
 
         for (i = 0; i < sz; ++i) {
-            mrkthr_ctx_t *thread;
-            thread = MRKTHR_SPAWN(NULL,
+            mnthr_ctx_t *thread;
+            thread = MNTHR_SPAWN(NULL,
                                   mnfcgi_handle_socket,
                                   config,
                                   (void *)(intptr_t)(sockets + i)->fd);
-            mrkthr_set_name(thread, "sock#%d", (sockets + i)->fd);
+            mnthr_set_name(thread, "sock#%d", (sockets + i)->fd);
         }
         free(sockets);
     }

@@ -1,16 +1,16 @@
 #include <inttypes.h> /* intmax_t */
 
-#include <mrkcommon/dumpm.h>
-#include <mrkcommon/util.h>
+#include <mncommon/dumpm.h>
+#include <mncommon/util.h>
 
-#include <mrkthr.h>
+#include <mnthr.h>
 
 #include <mnfcgi_app_private.h>
 
 #include "testoauth.h"
 #include "diag.h"
 
-extern mrkpq_cache_t cache;
+extern mnpq_cache_t cache;
 
 static mnbytes_t _begin = BYTES_INITIALIZER("begin;");
 static mnbytes_t _commit = BYTES_INITIALIZER("commit;");
@@ -23,20 +23,20 @@ null_cb(UNUSED PGconn *conn, UNUSED PGresult *qres, UNUSED void *udata)
     return 0;
 }
 
-#define MRKPQ_CACHE_EXEC5(cache, stmt, qparams, cb, rparams)                   \
-    mrkpq_cache_exec(cache, stmt, countof(qparams), qparams, cb, rparams)      \
+#define MNPQ_CACHE_EXEC5(cache, stmt, qparams, cb, rparams)                   \
+    mnpq_cache_exec(cache, stmt, countof(qparams), qparams, cb, rparams)      \
 
 
-#define MRKPQ_CACHE_EXEC4(cache, stmt, cb, rparams)    \
-    mrkpq_cache_exec(cache, stmt, 0, NULL, cb, rparams)\
+#define MNPQ_CACHE_EXEC4(cache, stmt, cb, rparams)    \
+    mnpq_cache_exec(cache, stmt, 0, NULL, cb, rparams)\
 
 
-#define MRKPQ_CACHE_EXEC3(cache, stmt, qparams)                \
-    MRKPQ_CACHE_EXEC5(cache, stmt, qparams, null_cb, NULL)     \
+#define MNPQ_CACHE_EXEC3(cache, stmt, qparams)                \
+    MNPQ_CACHE_EXEC5(cache, stmt, qparams, null_cb, NULL)     \
 
 
-#define MRKPQ_CACHE_EXEC2(cache, stmt)                 \
-    MRKPQ_CACHE_EXEC4(cache, stmt, null_cb, NULL)      \
+#define MNPQ_CACHE_EXEC2(cache, stmt)                 \
+    MNPQ_CACHE_EXEC4(cache, stmt, null_cb, NULL)      \
 
 
 
@@ -114,11 +114,11 @@ testoauth_verify_cred(const char *ident, const char *cred, mnbytes_t **code)
     /*
      * query and check
      */
-    if (MRKPQ_CACHE_EXEC2(&cache, &_begin) != 0) {
+    if (MNPQ_CACHE_EXEC2(&cache, &_begin) != 0) {
         goto err;
     }
 
-    if (MRKPQ_CACHE_EXEC5(
+    if (MNPQ_CACHE_EXEC5(
                 &cache, &_stmt1, qp1, stmt1_cb, &rparams) != 0) {
         res = -1;
         goto err;
@@ -130,19 +130,19 @@ testoauth_verify_cred(const char *ident, const char *cred, mnbytes_t **code)
         goto end;
     }
 
-    rparams.coden = bytes_printf("code:%ld", mrkthr_get_now_ticks_precise());
+    rparams.coden = bytes_printf("code:%ld", mnthr_get_now_ticks_precise());
     qp2[0] = BCDATA(rparams.coden);
     qp2[1] = BCDATA(rparams.code0);
     qp2[2] = BCDATA(rparams.pkey);
 
 
-    if (MRKPQ_CACHE_EXEC3(
+    if (MNPQ_CACHE_EXEC3(
                 &cache, &_stmt2, qp2) != 0) {
         res = -1;
         goto err;
     }
 
-    if (MRKPQ_CACHE_EXEC2(&cache, &_commit) != 0) {
+    if (MNPQ_CACHE_EXEC2(&cache, &_commit) != 0) {
         res = -1;
         goto err;
     }
@@ -160,9 +160,9 @@ end:
     return res;
 
 err:
-    if (MRKPQ_CACHE_EXEC2(&cache, &_rollback) != 0) {
+    if (MNPQ_CACHE_EXEC2(&cache, &_rollback) != 0) {
     }
-    mrkpq_cache_signal_error(&cache);
+    mnpq_cache_signal_error(&cache);
     goto end;
 }
 

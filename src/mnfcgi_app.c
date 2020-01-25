@@ -92,19 +92,19 @@ mnfcgi_app_error(mnfcgi_request_t *req, int code, mnbytes_t *text)
 {
     int res;
 
-    if (MRKUNLIKELY(
+    if (MNUNLIKELY(
         (res = mnfcgi_request_field_addf(
             req, 0, &_content_length, "0")) != 0)) {
         goto err;
     }
 
-    if (MRKUNLIKELY((res = mnfcgi_request_status_set(req, code, text)) != 0)) {
+    if (MNUNLIKELY((res = mnfcgi_request_status_set(req, code, text)) != 0)) {
         goto err;
     }
-    if (MRKUNLIKELY((res = mnfcgi_request_headers_end(req)) != 0)) {
+    if (MNUNLIKELY((res = mnfcgi_request_headers_end(req)) != 0)) {
         goto err;
     }
-    if (MRKUNLIKELY((res = mnfcgi_finalize_request(req)) != 0)) {
+    if (MNUNLIKELY((res = mnfcgi_finalize_request(req)) != 0)) {
         goto err;
     }
 
@@ -130,26 +130,26 @@ mnfcgi_app_redir(mnfcgi_request_t *req,
 {
     int res;
 
-    if (MRKUNLIKELY(
+    if (MNUNLIKELY(
         (res = mnfcgi_request_field_addf(
             req, 0, &_content_length, "0")) != 0)) {
         goto err;
     }
 
-    if (MRKUNLIKELY(
+    if (MNUNLIKELY(
         (res = mnfcgi_request_field_addb(req, 0, &_location, uri)) != 0)) {
         goto err;
     }
 
-    if (MRKUNLIKELY((res = mnfcgi_request_status_set(req, code, text)) != 0)) {
+    if (MNUNLIKELY((res = mnfcgi_request_status_set(req, code, text)) != 0)) {
         goto err;
     }
 
-    if (MRKUNLIKELY((res = mnfcgi_request_headers_end(req)) != 0)) {
+    if (MNUNLIKELY((res = mnfcgi_request_headers_end(req)) != 0)) {
         goto err;
     }
 
-    if (MRKUNLIKELY((res = mnfcgi_finalize_request(req)) != 0)) {
+    if (MNUNLIKELY((res = mnfcgi_finalize_request(req)) != 0)) {
         goto err;
     }
 
@@ -365,7 +365,7 @@ static int
 mnfcgi_app_endpoint_table_item_fini(mnbytes_t *key, void *value)
 {
     BYTES_DECREF(&key);
-    if (MRKLIKELY(value != NULL)) {
+    if (MNLIKELY(value != NULL)) {
         free(value);
         value = NULL;
     }
@@ -423,13 +423,13 @@ mnfcgi_app_register_endpoint(mnfcgi_app_t *app,
     int res;
 
     res = 0;
-    if (MRKLIKELY(
+    if (MNLIKELY(
             hash_get_item(&app->endpoint_tables, table->endpoint) != NULL)) {
         res = -1;
     } else {
         mnfcgi_app_endpoint_table_t *t;
 
-        if (MRKUNLIKELY(
+        if (MNUNLIKELY(
                 (t = malloc(sizeof(mnfcgi_app_endpoint_table_t))) == NULL)) {
             FAIL("malloc");
         }
@@ -459,7 +459,7 @@ mnfcgi_app_new(const char *host,
                mnfcgi_app_callback_table_t *table)
 {
     mnfcgi_app_t *res;
-    if (MRKUNLIKELY((res = malloc(sizeof(mnfcgi_app_t))) == NULL)) {
+    if (MNUNLIKELY((res = malloc(sizeof(mnfcgi_app_t))) == NULL)) {
         FAIL("malloc");
     }
     if (mnfcgi_app_init(res, host, port, max_conn, max_req, table) != 0) {

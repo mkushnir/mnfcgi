@@ -3,10 +3,10 @@
 
 #include <errno.h>
 
-#include <mrkcommon/bytestream.h>
-#include <mrkcommon/dumpm.h>
-#include <mrkcommon/util.h>
-#include <mrkthr.h>
+#include <mncommon/bytestream.h>
+#include <mncommon/dumpm.h>
+#include <mncommon/util.h>
+#include <mnthr.h>
 
 #include "mnfcgi_private.h"
 
@@ -24,7 +24,7 @@ params_item_fini(mnbytes_t *key, mnbytes_t *value)
 #define MNFCGI_REC_INITIALIZER(_ty, __a1)              \
 {                                                      \
     _ty *tmp;                                          \
-    if (MRKUNLIKELY((tmp =                             \
+    if (MNUNLIKELY((tmp =                             \
                 malloc(sizeof(_ty))) == NULL)) {       \
         FAIL("malloc");                                \
     }                                                  \
@@ -285,7 +285,7 @@ mnfcgi_parse_payload(mnbytestream_t *bs, mnfcgi_record_t *rec)
                  nread < rec->header.rsz;) {
                 ssize_t n;
 
-                if (MRKUNLIKELY(
+                if (MNUNLIKELY(
                         (n = mnfcgi_parse_kvp(
                                 rec,
                                 bs,
@@ -352,7 +352,7 @@ mnfcgi_parse_payload(mnbytestream_t *bs, mnfcgi_record_t *rec)
                  nread < rec->header.rsz;) {
                 ssize_t n;
 
-                if (MRKUNLIKELY(
+                if (MNUNLIKELY(
                         (n = mnfcgi_parse_kvp(
                                 rec,
                                 bs,
@@ -366,7 +366,7 @@ mnfcgi_parse_payload(mnbytestream_t *bs, mnfcgi_record_t *rec)
                 //CTRACE("value %s=%s",
                 //       BDATASAFE(key), BDATASAFE(value));
 
-                if (MRKLIKELY(key != NULL)) {
+                if (MNLIKELY(key != NULL)) {
                     mnbytes_t *oldkey, *oldvalue;
                     BYTES_INCREF(key);
                     BYTES_INCREF(value);
@@ -542,12 +542,12 @@ mnfcgi_render_kvp(mnbytestream_t *bs, mnbytes_t *key, mnbytes_t *value)
     eod = SEOD(bs);
     MNFCGI_RENDER_INT(bs, key->sz - 1);
     MNFCGI_RENDER_INT(bs, value->sz - 1);
-    if (MRKUNLIKELY(bytestream_cat(bs,
+    if (MNUNLIKELY(bytestream_cat(bs,
                                    key->sz - 1,
                                    BCDATA(key)) < 0)) {
         return -1;
     }
-    if (MRKUNLIKELY(bytestream_cat(bs,
+    if (MNUNLIKELY(bytestream_cat(bs,
                                    value->sz - 1,
                                    BCDATA(value)) < 0)) {
         return -1;
@@ -654,11 +654,11 @@ mnfcgi_render_payload(mnbytestream_t *bs, mnfcgi_record_t *rec, void *udata)
 
                 key = hit->key;
                 value = hit->value;
-                if (MRKLIKELY(value != NULL)) {
-                    if (MRKLIKELY(key != NULL)) {
+                if (MNLIKELY(value != NULL)) {
+                    if (MNLIKELY(key != NULL)) {
                         ssize_t n;
 
-                        if (MRKUNLIKELY(
+                        if (MNUNLIKELY(
                                 (n = mnfcgi_render_kvp(bs, key, value)) < 0)) {
                             nwritten = -1;
                             break;
@@ -715,7 +715,7 @@ mnfcgi_render(mnbytestream_t *bs, mnfcgi_record_t *rec, void *udata)
     nwritten += 2;
 
     eod = SEOD(bs);
-    if (MRKUNLIKELY((n = mnfcgi_render_payload(bs, rec, udata)) < 0)) {
+    if (MNUNLIKELY((n = mnfcgi_render_payload(bs, rec, udata)) < 0)) {
         res = MNFCGI_RENDER_ERROR;
         goto end;
 
@@ -744,7 +744,7 @@ mnfcgi_render(mnbytestream_t *bs, mnfcgi_record_t *rec, void *udata)
     //       SEOD(bs));
 
     eod = SEOD(bs);
-    if (MRKUNLIKELY((n = mnfcgi_render_padding(bs, rec)) < 0)) {
+    if (MNUNLIKELY((n = mnfcgi_render_padding(bs, rec)) < 0)) {
         res = MNFCGI_RENDER_ERROR;
         goto end;
 

@@ -1,8 +1,8 @@
-#include <mrkcommon/dumpm.h>
-#include <mrkcommon/util.h>
+#include <mncommon/dumpm.h>
+#include <mncommon/util.h>
 
-#include <mrkthr.h>
-#include <mrkpq.h>
+#include <mnthr.h>
+#include <mnpq.h>
 
 #include <mnfcgi_app_private.h>
 

@@ -10,12 +10,12 @@
 #include <stdlib.h>
 #include <stdio.h>
 
-#include <mrkcommon/bytes.h>
-#include <mrkcommon/bytestream.h>
-#include <mrkcommon/hash.h>
-#include <mrkcommon/stqueue.h>
+#include <mncommon/bytes.h>
+#include <mncommon/bytestream.h>
+#include <mncommon/hash.h>
+#include <mncommon/stqueue.h>
 
-#include <mrkthr.h>
+#include <mnthr.h>
 
 #ifdef __cplusplus
 extern "C" {
@@ -297,7 +297,7 @@ do {                                           \
  */
 typedef struct _mnfcgi_ctx {
     mnfcgi_config_t *config;
-    mrkthr_ctx_t *thread;
+    mnthr_ctx_t *thread;
     int fd;
     void *fp;
     mnbytestream_t in;

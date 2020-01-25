@@ -1,10 +1,10 @@
 #ifndef MNFCGI_TESTOAUTH_H_DEFINED
 #define MNFCGI_TESTOAUTH_H_DEFINED
 
-#include <mrkcommon/bytes.h>
-#include <mrkcommon/hash.h>
-#include <mrkcommon/heap.h>
-#include <mrkcommon/stqueue.h>
+#include <mncommon/bytes.h>
+#include <mncommon/hash.h>
+#include <mncommon/heap.h>
+#include <mncommon/stqueue.h>
 
 #include <mnfcgi_app.h>
 
@@ -12,58 +12,58 @@
 extern "C" {
 #endif
 
-#include <mrkthr.h>
-#include <mrkpq.h>
+#include <mnthr.h>
+#include <mnpq.h>
 /*
- * mrkpq_cache
+ * mnpq_cache
  */
 
 
-typedef struct _mrkpq_cache_cmd {
-    STQUEUE_ENTRY(_mrkpq_cache_cmd, link);
+typedef struct _mnpq_cache_cmd {
+    STQUEUE_ENTRY(_mnpq_cache_cmd, link);
     void *udata;
     int cmd;
-} mrkpq_cache_cmd_t;
+} mnpq_cache_cmd_t;
 
-typedef struct _mrkpq_cache {
+typedef struct _mnpq_cache {
     PGconn *conn;
     mnbytes_t *connstr;
-    mrkthr_ctx_t *thread;
-    mrkthr_cond_t cond;
-    STQUEUE(_mrkpq_cache_cmd, qcmd);
+    mnthr_ctx_t *thread;
+    mnthr_cond_t cond;
+    STQUEUE(_mnpq_cache_cmd, qcmd);
     int state;
 
     /*
-     * weak mrkpq_cache_entry_t *
+     * weak mnpq_cache_entry_t *
      */
     mnhash_t prepared;
 
     /*
-     * strong mrkpq_cache_entry_t *
+     * strong mnpq_cache_entry_t *
      */
     mnheap_t mru;
-} mrkpq_cache_t;
+} mnpq_cache_t;
 
-typedef struct _mrkpq_cache_entry {
+typedef struct _mnpq_cache_entry {
     uint64_t ts;
     mnbytes_t *stmt;
     //int nparams;
     //const char *const *params;
-    //mrkpq_result_cb_t cb;
+    //mnpq_result_cb_t cb;
     //void *udata;
-} mrkpq_cache_entry_t;
+} mnpq_cache_entry_t;
 
 
-#define MRKPQ_CACHE_WORKER (INT_MIN + 0x00010000)
-int mrkpq_cache_exec(mrkpq_cache_t *,
+#define MNPQ_CACHE_WORKER (INT_MIN + 0x00010000)
+int mnpq_cache_exec(mnpq_cache_t *,
                      mnbytes_t *,
                      int,
                      const char *const *,
-                     mrkpq_result_cb_t,
+                     mnpq_result_cb_t,
                      void *);
-int mrkpq_cache_init(mrkpq_cache_t *, const char *);
-void mrkpq_cache_fini(mrkpq_cache_t *);
-void mrkpq_cache_signal_error(mrkpq_cache_t *);
+int mnpq_cache_init(mnpq_cache_t *, const char *);
+void mnpq_cache_fini(mnpq_cache_t *);
+void mnpq_cache_signal_error(mnpq_cache_t *);
 
 
 /*

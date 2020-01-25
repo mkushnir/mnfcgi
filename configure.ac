@@ -89,15 +89,15 @@ AC_ARG_ENABLE(debug,
               [AM_CONDITIONAL([DEBUG], [enable_debug=yes])],
               [AM_CONDITIONAL([DEBUG], [test "$enable_debug" = "yes"])])
 
-AC_ARG_WITH(mrkpq,
-            AC_HELP_STRING([--with-mrkpq], [Build libmrkpq dependencies (default=no)]),
-            [AM_CONDITIONAL([MRKPQ], [with_mrkpq=yes])],
-            [AM_CONDITIONAL([MRKPQ], [test "$with_mrkpq" = "yes"])])
+AC_ARG_WITH(mnpq,
+            AC_HELP_STRING([--with-mnpq], [Build libmnpq dependencies (default=no)]),
+            [AM_CONDITIONAL([MNPQ], [with_mnpq=yes])],
+            [AM_CONDITIONAL([MNPQ], [test "$with_mnpq" = "yes"])])
 
 AM_CONDITIONAL([LINUX], [echo $build_os | grep linux >/dev/null])
 AM_CONDITIONAL([FREEBSD], [echo $build_os | grep freebsd >/dev/null])
 
 #dnl pass LDFLAGS=-L${LOCALBASE}/lib in the environment
-#AC_CHECK_LIB(mrkcommon, _fini, [], [AC_MSG_FAILURE(libmrkcommon.so is required. Please find it at git@github.com:mkushnir/mrkcommon.git)])
+#AC_CHECK_LIB(mncommon, _fini, [], [AC_MSG_FAILURE(libmncommon.so is required. Please find it at git@github.com:mkushnir/mncommon.git)])
 
 AC_OUTPUT

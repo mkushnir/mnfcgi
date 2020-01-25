@@ -1,8 +1,8 @@
 #include <assert.h>
 
-#include <mrkcommon/bytes.h>
-#include <mrkcommon/hash.h>
-#include <mrkcommon/dumpm.h>
+#include <mncommon/bytes.h>
+#include <mncommon/hash.h>
+#include <mncommon/dumpm.h>
 
 #include <mnfcgi.h>
 #include <mnfcgi_app.h>
@@ -29,7 +29,7 @@ dump_item(mnbytes_t *key, mnbytes_t *value, UNUSED void *udata)
 
 
 static void
-test_mrkhttp_parse_qterms(void)
+test_mnhttp_parse_qterms(void)
 {
     BYTES_ALLOCA(_s0, "qwe=b&asd=2&asd=&sdf=&");
     BYTES_ALLOCA(_s1, "a");
@@ -50,27 +50,27 @@ test_mrkhttp_parse_qterms(void)
               (hash_item_finalizer_t)fini_item);
 
     TRACE("s=%s", BDATA(_s0));
-    (void)mrkhttp_parse_qterms(_s0, '=', '&', &hash);
+    (void)mnhttp_parse_qterms(_s0, '=', '&', &hash);
     TRACE("s=%s", BDATA(_s1));
-    (void)mrkhttp_parse_qterms(_s1, '=', '&', &hash);
+    (void)mnhttp_parse_qterms(_s1, '=', '&', &hash);
     TRACE("s=%s", BDATA(_s2));
-    (void)mrkhttp_parse_qterms(_s2, '=', '&', &hash);
+    (void)mnhttp_parse_qterms(_s2, '=', '&', &hash);
     TRACE("s=%s", BDATA(_s3));
-    (void)mrkhttp_parse_qterms(_s3, '=', '&', &hash);
+    (void)mnhttp_parse_qterms(_s3, '=', '&', &hash);
     TRACE("s=%s", BDATA(_s4));
-    (void)mrkhttp_parse_qterms(_s4, '=', '&', &hash);
+    (void)mnhttp_parse_qterms(_s4, '=', '&', &hash);
     TRACE("s=%s", BDATA(_s5));
-    (void)mrkhttp_parse_qterms(_s5, '=', '&', &hash);
+    (void)mnhttp_parse_qterms(_s5, '=', '&', &hash);
     TRACE("s=%s", BDATA(_s6));
-    (void)mrkhttp_parse_qterms(_s6, '=', '&', &hash);
+    (void)mnhttp_parse_qterms(_s6, '=', '&', &hash);
     TRACE("s=%s", BDATA(_s7));
-    (void)mrkhttp_parse_qterms(_s7, '=', '&', &hash);
+    (void)mnhttp_parse_qterms(_s7, '=', '&', &hash);
     TRACE("s=%s", BDATA(_s8));
-    (void)mrkhttp_parse_qterms(_s8, '=', '&', &hash);
+    (void)mnhttp_parse_qterms(_s8, '=', '&', &hash);
     TRACE("s=%s", BDATA(_s9));
-    (void)mrkhttp_parse_qterms(_s9, '=', '&', &hash);
+    (void)mnhttp_parse_qterms(_s9, '=', '&', &hash);
     TRACE("s=%s", BDATA(_s10));
-    (void)mrkhttp_parse_qterms(_s10, '=', '&', &hash);
+    (void)mnhttp_parse_qterms(_s10, '=', '&', &hash);
     hash_traverse(&hash, (hash_traverser_t)dump_item, NULL);
     hash_fini(&hash);
 }
@@ -172,7 +172,7 @@ int
 main(void)
 {
     test0();
-    test_mrkhttp_parse_qterms();
+    test_mnhttp_parse_qterms();
     test1();
     return 0;
 }
