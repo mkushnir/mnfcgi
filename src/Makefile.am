@@ -11,6 +11,7 @@ EXTRA_DIST = $(diags)
 CLEANFILES = $(BUILT_SOURCES) *.core core
 #CLEANFILES += *.in
 AM_MAKEFLAGS = -s
+AM_LIBTOOLFLAGS = --silent
 
 lib_LTLIBRARIES = libmnfcgi.la
 noinst_HEADERS= mnfcgi_private.h mnfcgi_app_private.h
