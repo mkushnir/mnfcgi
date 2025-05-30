@@ -689,7 +689,8 @@ int
 mnfcgi_render(mnbytestream_t *bs, mnfcgi_record_t *rec, void *udata)
 {
     int res;
-    ssize_t nwritten, n;
+    UNUSED ssize_t nwritten;
+    ssize_t n;
     off_t eod0, eod;
 
     nwritten = 0;

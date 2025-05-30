@@ -915,7 +915,7 @@ mnfcgi_abort_request(mnfcgi_request_t *req, int app_status)
 
     bytestream_rewind(&req->ctx->in);
     bytestream_rewind(&req->ctx->out);
-    req->flags.complete = 1;
+    req->flags.complete = -1;
 
     return res;
 }
@@ -1326,7 +1326,7 @@ err:
              hit != NULL;
              hit = hash_next(&ctx->requests, &it)) {
             req = hit->value;
-            req->flags.complete = 1;
+            req->flags.complete = -1;
         }
 
         break;
@@ -1391,7 +1391,7 @@ mnfcgi_finalize_request(mnfcgi_request_t *req)
                     req->ctx->fp)) != 0)) {
             res = MNFCGI_IO_ERROR;
         }
-        req->flags.complete = 1;
+        req->flags.complete = -1;
     } else {
         while ((h = STQUEUE_HEAD(&req->_stdout)) != NULL) {
             mnfcgi_record_t *rec;
