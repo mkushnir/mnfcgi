@@ -641,7 +641,6 @@ mnfcgi_render_payload(mnbytestream_t *bs, mnfcgi_record_t *rec, void *udata)
             mnfcgi_get_values_t *tmp;
             mnhash_iter_t it;
             mnhash_item_t *hit;
-            ssize_t nwritten;
 
             tmp = (mnfcgi_get_values_t *)rec;
 

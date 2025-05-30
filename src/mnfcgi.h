@@ -191,7 +191,7 @@ int mnfcgi_flush_out(mnfcgi_request_t *);
 int mnfcgi_finalize_request(mnfcgi_request_t *);
 void mnfcgi_request_fill_info(mnfcgi_request_t *);
 mnbytes_t *mnfcgi_request_get_param(mnfcgi_request_t *, const mnbytes_t *);
-mnbytes_t *mnfcgi_request_get_query_term(mnfcgi_request_t *, mnbytes_t *);
+mnbytes_t *mnfcgi_request_get_query_term(mnfcgi_request_t *, const mnbytes_t *);
 
 
 #define MNFCGI_GET_QTN_ENULL                                   \
@@ -207,12 +207,12 @@ mnbytes_t *mnfcgi_request_get_query_term(mnfcgi_request_t *, mnbytes_t *);
 
 
 int mnfcgi_request_get_query_term_double(mnfcgi_request_t *,
-                                         mnbytes_t *,
+                                         const mnbytes_t *,
                                          int,
                                          double *);
 
 int mnfcgi_request_get_query_term_intmax(mnfcgi_request_t *,
-                                         mnbytes_t *,
+                                         const mnbytes_t *,
                                          int,
                                          intmax_t *);
 

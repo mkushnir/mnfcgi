@@ -261,7 +261,7 @@ mnfcgi_request_get_param(mnfcgi_request_t *req,
 
 mnbytes_t *
 mnfcgi_request_get_query_term(mnfcgi_request_t *req,
-                              mnbytes_t *name)
+                              const mnbytes_t *name)
 {
     mnbytes_t *res;
     mnhash_item_t *hit;
@@ -277,7 +277,7 @@ mnfcgi_request_get_query_term(mnfcgi_request_t *req,
 
 int
 mnfcgi_request_get_query_term_intmax(mnfcgi_request_t *req,
-                                     mnbytes_t *name,
+                                     const mnbytes_t *name,
                                      int radix,
                                      intmax_t *rv)
 {
@@ -302,7 +302,7 @@ end:
 
 int
 mnfcgi_request_get_query_term_double(mnfcgi_request_t *req,
-                                     mnbytes_t *name,
+                                     const mnbytes_t *name,
                                      UNUSED int radix,
                                      double *rv)
 {

@@ -69,7 +69,7 @@ dnl AM_MAINTAINER_MODE
 AC_FUNC_MALLOC
 AC_FUNC_REALLOC
 
-AC_CHECK_FUNCS([memset strchr strdup srandomdev mallopt])
+AC_CHECK_FUNCS([abort2 memset strchr strdup srandomdev mallopt])
 AC_CHECK_HEADERS([arpa/inet.h limits.h malloc.h stddef.h sys/socket.h])
 AC_CHECK_HEADER_STDBOOL
 AC_TYPE_OFF_T
