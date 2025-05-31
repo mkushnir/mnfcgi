@@ -361,9 +361,27 @@ mnfcgi_app_get_allowed_methods(mnfcgi_request_t *req)
 }
 
 
-static int
-mnfcgi_app_endpoint_table_item_fini(mnbytes_t *key, void *value)
+static uint64_t
+_bytes_hash (void const *o)
 {
+    mnbytes_t const *b = o;
+    return bytes_hash(b);
+}
+
+
+static int
+_bytes_cmp (void const *oa, void const *ob)
+{
+    mnbytes_t const *a = oa, *b = ob;
+    return bytes_cmp(a, b);
+}
+
+static int
+mnfcgi_app_endpoint_table_item_fini(void *k, void *v)
+{
+    mnbytes_t *key = k;
+    void *value = v;
+
     BYTES_DECREF(&key);
     if (MNLIKELY(value != NULL)) {
         free(value);
@@ -398,9 +416,9 @@ mnfcgi_app_init(mnfcgi_app_t *app,
     }
 
     hash_init(&app->endpoint_tables, 61,
-              (hash_hashfn_t)bytes_hash,
-              (hash_item_comparator_t)bytes_cmp,
-              (hash_item_finalizer_t)mnfcgi_app_endpoint_table_item_fini);
+              _bytes_hash,
+              _bytes_cmp,
+              mnfcgi_app_endpoint_table_item_fini);
 
     if (app->callback_table.init_app != NULL) {
         res = app->callback_table.init_app(app);

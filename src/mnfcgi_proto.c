@@ -71,7 +71,7 @@ mnfcgi_request_method_str(unsigned m)
  */
 
 static uint64_t
-mnfcgi_request_hash(void *x)
+mnfcgi_request_hash(void const *x)
 {
     uint16_t rid = (uint16_t)(uintptr_t)x;
     return (uint64_t)rid;
@@ -79,7 +79,7 @@ mnfcgi_request_hash(void *x)
 
 
 static int
-mnfcgi_request_item_cmp(void *a, void *b)
+mnfcgi_request_item_cmp(void const *a, void const *b)
 {
     uint16_t ra = (uint16_t)(uintptr_t)a;
     uint16_t rb = (uint16_t)(uintptr_t)b;
@@ -87,9 +87,26 @@ mnfcgi_request_item_cmp(void *a, void *b)
 }
 
 
-static int
-header_item_fini(mnbytes_t *key, mnbytes_t *value)
+static uint64_t
+_bytes_hash (void const *o)
 {
+    mnbytes_t const *b = o;
+    return bytes_hash(b);
+}
+
+
+static int
+_bytes_cmp (void const *oa, void const *ob)
+{
+    mnbytes_t const *a = oa, *b = ob;
+    return bytes_cmp(a, b);
+}
+
+
+static int
+header_item_fini(void *k, void *v)
+{
+    mnbytes_t *key = k, *value = v;
     BYTES_DECREF(&key);
     BYTES_DECREF(&value);
     return 0;
@@ -102,9 +119,9 @@ mnfcgi_request_init(mnfcgi_request_t *req)
     req->ctx = NULL;
     hash_init(&req->headers,
               31,
-              (hash_hashfn_t)bytes_hash,
-              (hash_item_comparator_t)bytes_cmp,
-              (hash_item_finalizer_t)header_item_fini);
+              _bytes_hash,
+              _bytes_cmp,
+              header_item_fini);
 
     req->info.scheme = MNFCGI_REQUEST_SCHEME_HTTP;
     req->info.method = MNFCGI_REQUEST_METHOD_GET;
@@ -112,14 +129,14 @@ mnfcgi_request_init(mnfcgi_request_t *req)
     req->info.path_info = NULL;
     hash_init(&req->info.query_terms,
               31,
-              (hash_hashfn_t)bytes_hash,
-              (hash_item_comparator_t)bytes_cmp,
-              (hash_item_finalizer_t)header_item_fini);
+              _bytes_hash,
+              _bytes_cmp,
+              header_item_fini);
     hash_init(&req->info.cookie,
               17,
-              (hash_hashfn_t)bytes_hash,
-              (hash_item_comparator_t)bytes_cmp,
-              (hash_item_finalizer_t)header_item_fini);
+              _bytes_hash,
+              _bytes_cmp,
+              header_item_fini);
     req->info.content_type = NULL;
     req->info.content_length = 0;
     req->udata = NULL;
@@ -227,8 +244,9 @@ mnfcgi_request_destroy(mnfcgi_request_t **req)
 
 
 static int
-mnfcgi_request_item_fini(UNUSED void *key, mnfcgi_request_t *req)
+mnfcgi_request_item_fini(UNUSED void *key, void *value)
 {
+    mnfcgi_request_t *req = value;
     mnfcgi_request_destroy(&req);
     return 0;
 }
@@ -782,9 +800,9 @@ mnfcgi_ctx_init(mnfcgi_ctx_t *ctx,
 
     hash_init(&ctx->requests,
               MNFCGI_CTX_REQUESTS_HASHLEN,
-              (hash_hashfn_t)mnfcgi_request_hash,
-              (hash_item_comparator_t)mnfcgi_request_item_cmp,
-              (hash_item_finalizer_t)mnfcgi_request_item_fini);
+              mnfcgi_request_hash,
+              mnfcgi_request_item_cmp,
+              mnfcgi_request_item_fini);
 }
 
 static void

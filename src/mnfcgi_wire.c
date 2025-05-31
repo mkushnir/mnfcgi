@@ -13,8 +13,9 @@
 #include "diag.h"
 
 static int
-params_item_fini(mnbytes_t *key, mnbytes_t *value)
+params_item_fini(void *k, void *v)
 {
+    mnbytes_t *key = k, *value = v;
     BYTES_DECREF(&key);
     BYTES_DECREF(&value);
     return 0;
@@ -38,6 +39,22 @@ params_item_fini(mnbytes_t *key, mnbytes_t *value)
     rec->header.psz = 0;                               \
     rec->header.reserved = 0;                          \
 }                                                      \
+
+
+static uint64_t
+_bytes_hash (void const *o)
+{
+    mnbytes_t const *b = o;
+    return bytes_hash(b);
+}
+
+
+static int
+_bytes_cmp (void const *oa, void const *ob)
+{
+    mnbytes_t const *a = oa, *b = ob;
+    return bytes_cmp(a, b);
+}
 
 
 mnfcgi_record_t *
@@ -69,9 +86,9 @@ mnfcgi_record_new(uint8_t ty)
             MNFCGI_REC_INITIALIZER(mnfcgi_params_t,
                     hash_init(&tmp->params,
                               127,
-                              (hash_hashfn_t)bytes_hash,
-                              (hash_item_comparator_t)bytes_cmp,
-                              (hash_item_finalizer_t)params_item_fini);
+                              _bytes_hash,
+                              _bytes_cmp,
+                              params_item_fini);
                     );
             break;
 
@@ -109,9 +126,9 @@ mnfcgi_record_new(uint8_t ty)
             MNFCGI_REC_INITIALIZER(mnfcgi_get_values_t,
                     hash_init(&tmp->values,
                               127,
-                              (hash_hashfn_t)bytes_hash,
-                              (hash_item_comparator_t)bytes_cmp,
-                              (hash_item_finalizer_t)params_item_fini);
+                              _bytes_hash,
+                              _bytes_cmp,
+                              params_item_fini);
                     );
             break;
 
